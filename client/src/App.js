@@ -6,14 +6,14 @@ import Menu from './components/Menu';
 import AppNavbar from './components/AppNavbar';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory } from '@fortawesome/free-solid-svg-icons'
-
+import { faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell} from '@fortawesome/free-solid-svg-icons'
 
 
 import { Container } from 'reactstrap';
+import FooterPlayer from './components/FooterPlayer';
 
 
-library.add(faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory)
+library.add(faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell)
 
 function App() {
   return (
@@ -24,6 +24,7 @@ function App() {
         <Container id="main">
           <AppNavbar />
         </Container>
+        <FooterPlayer />
       </div>
     </div>
   );

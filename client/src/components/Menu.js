@@ -13,8 +13,8 @@ class Menu extends Component {
                 <NavItem>
                     
                     <NavLink href="#" className="sidebarItem">
-                        <FontAwesomeIcon fixedWidth icon="home" size="lg" className="sidebarIcon" />
-                        Home
+                        <FontAwesomeIcon fixedWidth icon="heartbeat" size="lg" className="sidebarIcon" />
+                        Review
                     </NavLink>
                 </NavItem>
                 
@@ -34,7 +34,7 @@ class Menu extends Component {
                     </NavLink>
                 </NavItem>
 
-                <div className="catText">Your submissions</div>
+                <div className="catText">Your Submissions</div>
 
                 <NavItem>
                     
