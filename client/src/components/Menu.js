@@ -9,10 +9,12 @@ class Menu extends Component {
                 
                 <div className="logo"><img src="/logo.png" alt="logo"></img></div>
 
+                <div activeMarker className="activeMarker"></div>
+
                 <div className="catText">Main</div>
                 <NavItem>
                     
-                    <NavLink href="#" className="sidebarItem">
+                    <NavLink href="#" className="sidebarItem sidebarActive">
                         <FontAwesomeIcon fixedWidth icon="heartbeat" size="lg" className="sidebarIcon" />
                         Review
                     </NavLink>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat:500,600,700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:500,600,700,800&display=swap');
 
 .wrapper {
     display: flex;
@@ -32,6 +32,13 @@
     margin-right: 1rem;
 }
 
+.activeMarker {
+    width:5px;
+    height:17px;
+    background-color: #E61B4C;
+    position:absolute;
+    top:150px;  
+}
 
 .sidebarItem {
     color: #5D5D5D;
@@ -39,6 +46,10 @@
     font-family: "Montserrat";
     font-style: normal;
     font-weight: 600;
+}
+
+.sidebarActive {
+    color: #E61B4C !important;
 }
 
 .sidebarItem:hover {
@@ -86,7 +97,7 @@
 }
 
 .myBreadcrumb {
-    padding: 0.8rem 0.5rem !important; 
+    
     margin-bottom: 0 !important;
     background-color: rgba(0,0,0,0) !important;
 }
@@ -124,9 +135,6 @@
      color: #5d5d5d !important;
  }
 
- .notificationsButton {
-     color: #5D5D5D;
- }
 
 .avatar {
     vertical-align: middle;
@@ -146,9 +154,47 @@
 }
 
 a {
-    text-decoration:none;
+    text-decoration: none !important;
 }
 
 a:hover {
+    text-decoration: none !important;
+    color: #E61B4C !important;
+}
+
+a:hover .username {
+    transition: color 0.17s ease-out; 
+    color: #E61B4C;
     text-decoration: none;
+}
+
+a:hover .avatar {
+    border-width: 3px;
+}
+
+.notificationLink {
+    vertical-align: middle;
+    color: #5d5d5d;
+    font-size: 11pt;
+}
+
+a, a:link, a:active, a:visited {
+    transition: color 0.17s ease-out; 
+   }
+
+a .avatar, a:hover .avatar {
+    transition: border-width 0.17s ease-out;
+}
+
+.genresList {
+    line-height: 25px;
+    color: #5D5D5D;
+    font-size: 18pt;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 800;
+}
+
+.genresLink {
+    color: #5d5d5d;
 }
