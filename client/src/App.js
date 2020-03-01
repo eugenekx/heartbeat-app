@@ -12,7 +12,7 @@ import { faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, 
 import { Container, Row, Col } from 'reactstrap';
 import FooterPlayer from './components/FooterPlayer';
 import GenresList from './components/GenresList';
-
+import SongPlayer from './components/SongPlayer';
 
 library.add(faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell)
 
@@ -25,12 +25,13 @@ function App() {
 
         <Container id="main">
           <AppNavbar />
-          <Container>
+          <Container className="ml-3">
             <Row>
               <Col>
+                <SongPlayer />
               </Col>
 
-              <Col xs="auto">
+              <Col xs="auto" className="d-none d-lg-inline">
                 <GenresList />
               </Col>
             </Row>
