@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
 import { Col, Row } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 
 class SongPlayer extends Component {
     render() {
@@ -11,17 +13,13 @@ class SongPlayer extends Component {
                         <img src="artwork.jpeg" className="artwork"/>
                     </Col>
                     <Col>
-                        <Row>
-                            <Col>
-                                Row1
-                            </Col>
-                        </Row>
-
-                        <Row>
-                            <Col>
-                                Row2
-                            </Col>
-                        </Row>
+                        <div className="player-row pl-2"><FontAwesomeIcon icon="play" size="lg" className="playButton mr-3"/>
+                            <div className="player-artist-name ml-1">Tame Impala 
+                                <div className="d-block player-track-name">Mind Mischief</div>
+                            </div>
+                        <div className="ml-auto next-song-label">NEXT SONG  <FontAwesomeIcon icon="forward" fixedWidth className="forwardButton"/> </div>
+                        </div>
+                        <div className="player-row waveform"></div>
                     </Col>
                 </Row>
             </div>

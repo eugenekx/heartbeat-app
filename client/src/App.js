@@ -6,7 +6,7 @@ import Menu from './components/Menu';
 import AppNavbar from './components/AppNavbar';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell} from '@fortawesome/free-solid-svg-icons'
+import { faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward} from '@fortawesome/free-solid-svg-icons'
 
 
 import { Container, Row, Col } from 'reactstrap';
@@ -14,7 +14,7 @@ import FooterPlayer from './components/FooterPlayer';
 import GenresList from './components/GenresList';
 import SongPlayer from './components/SongPlayer';
 
-library.add(faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell)
+library.add(faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward)
 
 function App() {
   return (

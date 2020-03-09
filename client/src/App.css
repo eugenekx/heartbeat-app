@@ -208,3 +208,53 @@ a:focus {
     height: 180px;
     box-shadow: 0 0 20px rgba(0,0,0,0.3);
 }
+
+.player-row {
+    height: 90px;
+    display: flex;
+    align-items: center;
+
+}
+
+.player-artist-name {
+    letter-spacing: .5px;
+    color: #5D5D5D;
+    font-size: 11pt;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 700;
+}
+
+.player-track-name {
+    margin-top: -8px;
+    color: #E61B4C;
+    font-size: 21pt;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 600;
+}
+
+.playButton {
+    margin-top: -15px;
+}
+
+.forwardButton {
+    font-size: 10pt;
+    margin-left: 2px;
+}
+
+.next-song-label {
+    margin-top: -10px;
+    letter-spacing: .5px;
+    color: white;
+    font-size: 10pt;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 500;
+}
+
+.waveform {
+    background-color: #2D2B36;
+    border-radius: 5px;
+
+}
