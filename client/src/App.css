@@ -86,12 +86,13 @@
 }
 
 .footerPlayer {
+    display: flex;
+    
     position: fixed;
     z-index: 1001;
     bottom: 0;
     width: 100%;
     height: 60px;
-    line-height: 60px;
     background-color:#201F26;
     box-shadow: 0 -20px 70px -5px rgba(0,0,0,0.3);
 }
@@ -319,7 +320,7 @@ a:focus {
     width: 450px;
     height: 100px;
     border-radius: 5px;
-    padding: 0.5rem;
+    padding: 0.7rem;
     outline: none;
     resize: none;
     overflow: hidden;
@@ -333,5 +334,106 @@ a:focus {
 
 .inactive {
     color: #5D5D5D;
+}
+
+.artwork-footer {
     
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 40px;
+    height: 40px;
+    border:1px solid #5D5D5D;
+}
+
+
+.footer-artist-name {
+    
+    margin-top: 15px;
+    margin-left: 15px;
+    display: block;
+    color: #5D5D5D;
+    font-size: 6pt;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 600;
+}
+
+.footer-track-name {
+    display: block;
+    margin-top: -2px;
+    color: #E61B4C;
+    font-size: 12pt;
+    font-family: "Montserrat";
+    font-weight: 600;
+}
+
+
+.footer-controls {
+    display: flex;
+    align-items: center;
+    font-size: 10pt;
+}
+
+.slide-container {
+    display: flex;
+    align-items: center;
+    margin-left: 1rem;
+    width: 75%;
+}
+
+.footer-player-time {
+    display: flex;
+    align-items: center;
+}
+
+.slider {
+    background: linear-gradient(90deg, #E61B4C 0%, #5D5D5D 0%);
+    -webkit-appearance: none;
+    width: 500px;
+    height: 5px;
+    border-radius: 12px;
+    box-shadow: 
+}
+
+.slider:hover {
+    opacity: 1;
+}
+.slider:focus {
+    outline: 0;
+}
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+
+
+.volumeSlider {
+    background: linear-gradient(90deg, #E61B4C 100%, #5D5D5D 100%);
+    -webkit-appearance: none;
+    width: 150px;
+    height: 5px;
+    border-radius: 12px;
+    box-shadow: 
+}
+
+.volumeSlider:hover {
+    opacity: 1;
+}
+.volumeSlider:focus {
+    outline: 0;
+}
+.volumeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
 }
