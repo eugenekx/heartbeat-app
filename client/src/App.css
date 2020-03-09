@@ -260,7 +260,6 @@ a:focus {
 }
 
 .artist-info {
-    background-color: #2D2B36;
     width: 180px;
     margin-top: 2rem;
     margin-left: 1rem;
@@ -281,7 +280,6 @@ a:focus {
 }
 
 .artist-links {
-    
     color: #5D5D5D;
     font-size: 9pt;
     font-family: "Montserrat";
@@ -296,4 +294,44 @@ a:focus {
     font-weight: 500;
     text-decoration: none;
     color: white;
+}
+
+
+.your-rating {
+    margin-top: 2rem;
+    margin-left: 1rem;
+    padding-left: 0;
+    padding-right: 2rem;
+}
+
+.your-rating-h {
+    font-size: 14pt;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 500;
+    text-decoration: none;
+    color: white;
+}
+
+.text-area {
+    display: block;
+    background-color: #2D2B36;
+    width: 450px;
+    height: 100px;
+    border-radius: 5px;
+    padding: 0.5rem;
+    outline: none;
+    resize: none;
+    overflow: hidden;
+    border-width: 0;
+    color: white;
+}
+
+.review-buttons {
+    float: right;
+}
+
+.inactive {
+    color: #5D5D5D;
+    
 }
