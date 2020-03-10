@@ -17,11 +17,15 @@ import ArtistInfo from './components/ArtistInfo';
 import YourRating from './components/YourRating';
 
 
+import { Provider } from 'react-redux';
+import store from './store';
+
 library.add(faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faBandcamp, faSpotify, faFacebook, faTwitter, 
             faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause);
 
 function App() {
   return (
+    <Provider store={store}>
     <div className="App">
     
       <div className="wrapper">
@@ -55,6 +59,7 @@ function App() {
         <FooterPlayer />
       </div>
     </div>
+    </Provider>
   );
 }
 

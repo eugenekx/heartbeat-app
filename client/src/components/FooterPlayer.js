@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+import { connect } from 'react-redux';
+import { getSong } from '../actions/songActions';
+import PropTypes from 'prop-types';
+
 function getTime(time) {
     if (!isNaN(time)) {
       return (
@@ -52,6 +56,8 @@ class FooterPlayer extends Component {
     }
 
     componentDidMount() {
+        this.props.getSong("5e677d5010cde82f103af417");
+        
         this.startTimer();
         this.audio.addEventListener("timeupdate", e => {
           var v = Math.floor(e.target.currentTime / e.target.duration * 1000)
@@ -96,6 +102,7 @@ class FooterPlayer extends Component {
     }
 
     render() {
+        const currentSong = this.props.song.song;
         return(
             <footer className="footerPlayer text-white">
                 <img src={this.state.currentSongArtwork} alt="avatar" className="artwork-footer" />
@@ -140,4 +147,16 @@ class FooterPlayer extends Component {
     }
 }
 
-export default FooterPlayer;
+FooterPlayer.propTypes = {
+    getSong: PropTypes.func.isRequired,
+    song: PropTypes.object.isRequired
+}
+
+const mapStateToProps = (state) => ({
+    song: state.song
+});
+
+export default connect(
+    mapStateToProps, 
+    { getSong }
+    )(FooterPlayer);

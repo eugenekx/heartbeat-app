@@ -4,6 +4,8 @@ const path = require('path');
 
 const app = express();
 
+const songs = require('./routes/api/songs');
+
 // Bodyparser Middleware
 app.use(express.json());
 
@@ -15,6 +17,8 @@ mongoose
     .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected...'))
     .catch(err => console.log(err));
+
+app.use('/api/songs', songs);
 
 // Serve static assets if in production
 if(process.env.NODE_ENV === 'production') {
