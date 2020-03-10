@@ -437,3 +437,15 @@ a:focus {
     border-radius: 50%;
     cursor: pointer;
 }
+
+.footer-player-button {
+    background: none;
+    border: none;
+    color: white;
+    text-decoration: none;
+}
+
+
+.footer-player-button:focus {
+    outline: 0;
+}

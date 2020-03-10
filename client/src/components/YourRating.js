@@ -10,7 +10,7 @@ class YourRating extends Component {
                 <p className="your-rating-h">Your Review: </p>
                 <textarea className="text-area" placeholder="What do you think about the song? (optional)"></textarea>
                     <div className="review-buttons mt-3">
-                        <FontAwesomeIcon icon={['fas', 'thumbs-up']} className="mr-1 mr-3" size="lg" />
+                        <FontAwesomeIcon icon={['fas', 'thumbs-up']} className="mr-1 mr-3 inactive" size="lg" />
                         <FontAwesomeIcon icon={['fas', 'thumbs-down']} className="mr-1 inactive" size="lg" />
                             
                     </div>

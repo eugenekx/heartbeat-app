@@ -6,7 +6,7 @@ import Menu from './components/Menu';
 import AppNavbar from './components/AppNavbar';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faThumbsUp, faThumbsDown, faBackward, faVolumeUp} from '@fortawesome/free-solid-svg-icons'
+import { faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause} from '@fortawesome/free-solid-svg-icons'
 import { faBandcamp, faSpotify, faFacebook, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 import { Container, Row, Col } from 'reactstrap';
@@ -18,7 +18,7 @@ import YourRating from './components/YourRating';
 
 
 library.add(faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faBandcamp, faSpotify, faFacebook, faTwitter, 
-            faThumbsUp, faThumbsDown, faBackward, faVolumeUp);
+            faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause);
 
 function App() {
   return (
