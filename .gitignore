@@ -111,3 +111,6 @@ dist
 
 # Music
 *.mp3
+
+# Keys
+config/keys.js
