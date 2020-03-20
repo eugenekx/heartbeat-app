@@ -114,3 +114,7 @@ dist
 
 # Keys
 config/keys.js
+
+# Songdata
+
+client/public/songdata

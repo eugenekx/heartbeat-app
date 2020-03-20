@@ -1,43 +1,14 @@
-import { GET_SONG, ADD_SONG, DELETE_SONG, SONG_LOADING } from './types';
+import { GET_REVIEW_SONG } from './types';
 import axios from 'axios';
 
 
-export const getSong = id => dispatch => {
-    dispatch(setSongLoading());
+export const getReviewSong = id => dispatch => {
     axios
         .get(`/api/songs/${id}`)
         .then(res =>
             dispatch({
-                type: GET_SONG,
+                type: GET_REVIEW_SONG,
                 payload: res.data 
             })
     )
 };
-
-export const addSong = song => dispatch => {
-    axios
-        .post('/api/songs', song)
-        .then(res => 
-            dispatch({
-                type: ADD_SONG,
-                payload: res.data
-            })
-        )
-}
-
-export const deleteSong = id => dispatch => {
-    axios
-        .delete(`api/songs/${id}`)
-        .then(res =>
-            dispatch({
-                type: DELETE_SONG,
-                payload: id
-            })
-        )    
-};
-
-export const setSongLoading = () => {
-    return {
-        type: SONG_LOADING
-    };
-}

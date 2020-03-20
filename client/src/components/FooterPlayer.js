@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { connect } from 'react-redux';
-import { getSong } from '../actions/songActions';
+import { getReviewSong } from '../actions/songActions';
 import PropTypes from 'prop-types';
 
 function getTime(time) {
@@ -19,18 +19,11 @@ class FooterPlayer extends Component {
         play: false,
         sliderValue: 1,
         volumeValue: 100,
-        currentSongFile: "track.mp3",
-        currentSongTitle: "Mind Mischief",
-        currentSongArtist: "Tame Impala",
-        currentSongArtwork: "artwork.jpeg",
-        currentSongDuration: "-:-",
-        currentSongTime: "-:-",
         secondsLeft: 5,
-        enableRating: false
+        enableRating: false,
     }
     
-    audio = new Audio(this.state.currentSongFile);
-    
+    audio = new Audio();
 
     startTimer = () => {
         var timerId = setInterval(this.timer, 1000);
@@ -56,18 +49,19 @@ class FooterPlayer extends Component {
     }
 
     componentDidMount() {
-        this.props.getSong("5e677d5010cde82f103af417");
-        
-        this.startTimer();
+        this.props.getReviewSong("5e677d5010cde82f103af417");
+
+        console.log(this.props.song.song);
+
         this.audio.addEventListener("timeupdate", e => {
-          var v = Math.floor(e.target.currentTime / e.target.duration * 1000)
-          this.setState({
-            currentSongTime: getTime(e.target.currentTime),
-            currentSongDuration: getTime(e.target.duration),
-            sliderValue: v
-          });
-          document.getElementById('songRange').style.background = `linear-gradient(90deg, #E61B4C ${v/10}%, #5D5D5D ${v/10}%)`;
+            var v = Math.floor(e.target.currentTime / e.target.duration * 1000)
+            this.setState({
+              sliderValue: v
+            });
+            document.getElementById('songRange').style.background = `linear-gradient(90deg, #E61B4C ${v/10}%, #5D5D5D ${v/10}%)`;
         });
+
+        this.startTimer();
       }
     
       componentWillUnmount() {
@@ -75,6 +69,7 @@ class FooterPlayer extends Component {
       }
 
     handleSliderChange = (e) => {
+        console.log(this.props.song.song.artwork);
         var v = e.target.value;
         this.setState({
             sliderValue: v
@@ -96,18 +91,23 @@ class FooterPlayer extends Component {
     }
 
     togglePlay = (e) => {
+        if (!this.state.play && this.audio.src === '') {
+            this.audio.src = this.props.song.song.filename;
+        }
+
         this.state.play ? this.audio.pause() : this.audio.play();
         this.setState({ play: !this.state.play });
         
     }
 
+    
     render() {
-        const currentSong = this.props.song.song;
+        const { song } = this.props.song;
         return(
             <footer className="footerPlayer text-white">
-                <img src={this.state.currentSongArtwork} alt="avatar" className="artwork-footer" />
-                <div className="footer-artist-name">{this.state.currentSongArtist}
-                                <div className="footer-track-name">{this.state.currentSongTitle}</div>
+                <img src={song.artwork} alt="avatar" className="artwork-footer" />
+                <div className="footer-artist-name">{song.artistName}
+                                <div className="footer-track-name">{song.name}</div>
                 </div>
 
                 <div className="footer-controls ml-5">
@@ -119,7 +119,7 @@ class FooterPlayer extends Component {
                 
                 <FontAwesomeIcon icon="forward" size="lg" className="ml-4"/>
                 <div className="footer-player-time ml-4">
-                    {this.state.currentSongTime}
+                    {getTime(this.audio.currentTime)}
                 </div>
 
                 <div className="slide-container">
@@ -127,7 +127,7 @@ class FooterPlayer extends Component {
                 </div>
 
                 <div className="footer-player-time ml-4">
-                    {this.state.currentSongDuration}
+                    {getTime(this.audio.duration)}
                 </div>
                 </div>
 
@@ -148,7 +148,7 @@ class FooterPlayer extends Component {
 }
 
 FooterPlayer.propTypes = {
-    getSong: PropTypes.func.isRequired,
+    getReviewSong: PropTypes.func.isRequired,
     song: PropTypes.object.isRequired
 }
 
@@ -158,5 +158,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(
     mapStateToProps, 
-    { getSong }
+    { getReviewSong }
     )(FooterPlayer);

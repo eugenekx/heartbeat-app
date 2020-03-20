@@ -1,13 +1,41 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const multer = require('multer');
 const path = require('path');
-
+const crypto = require('crypto');
+const mime = require('mime');
 const app = express();
 
 const songs = require('./routes/api/songs');
 
 // Bodyparser Middleware
 app.use(express.json());
+
+// Multer Storage
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.resolve(__dirname, 'client', 'public', 'songdata'));
+    },
+    filename: function (req, file, cb) {
+      crypto.pseudoRandomBytes(16, function (err, raw) {
+        cb(null, raw.toString('hex') + path.extname(file.originalname));
+      });
+    }
+  });
+  var upload = multer({ storage: storage });
+
+  app.post('/upload', upload.single('artwork'), (req, res, next) => {
+    const file = req.file
+    if (!file) {
+      const error = new Error('Please upload a file')
+      error.httpStatusCode = 400
+      return next(error)
+    }
+    res.send(res.req.file.filename); 
+    
+  })
+
+
 
 // DB Config
 const db = require('./config/keys').mongoURI;
