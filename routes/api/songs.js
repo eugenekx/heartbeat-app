@@ -1,21 +1,21 @@
 const express = require('express');
 const router = express.Router();
-
+const auth = require('../../middleware/auth');
 // Song Model
 const Song = require('../../models/Song');
 
 // @route   GET api/songs
 // @desc    Get Song By ID
-// @access  Public
-router.get('/:id', (req, res) => {
+// @access  Private
+router.get('/:id', auth, (req, res) => {
     Item.findById(req.params.id)
         .then(song => res.json(song))
 });
 
 // @route   POST api/songs
 // @desc    Create Song
-// @access  Public
-router.post('/', (req, res) => {
+// @access  Private
+router.post('/', auth, (req, res) => {
     const newSong = new Song({
         name: req.body.name,
         artistName: req.body.artistName,
@@ -29,8 +29,8 @@ router.post('/', (req, res) => {
 
 // @route   DELETE api/songs
 // @desc    Delete Item
-// @access  Public
-router.delete('/:id', (req, res) => {
+// @access  Private
+router.delete('/:id', auth, (req, res) => {
     Song.findById(req.params.id)
     .then(song => song.remove().then(() => res.json({success: true})))
     .catch(err => res.status(404).json({success: false}));
