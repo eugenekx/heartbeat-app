@@ -103,11 +103,13 @@ class FooterPlayer extends Component {
     
     render() {
         const { song } = this.props.song;
+        const currentTime = getTime(this.audio.currentTime);
+        const duration = getTime(this.audio.duration);
         return(
             <footer className="footerPlayer text-white">
-                <img src={song.artwork} alt="avatar" className="artwork-footer" />
-                <div className="footer-artist-name">{song.artistName}
-                                <div className="footer-track-name">{song.name}</div>
+                <img src={song.artwork ? song.artwork : "userpic.png"} alt="avatar" className="artwork-footer" />
+                <div className="footer-artist-name">{song.artistName ? song.artistName : '-'}
+                                <div className="footer-track-name">{song.name ? song.name : '-' }</div>
                 </div>
 
                 <div className="footer-controls ml-5">
@@ -119,7 +121,7 @@ class FooterPlayer extends Component {
                 
                 <FontAwesomeIcon icon="forward" size="lg" className="ml-4"/>
                 <div className="footer-player-time ml-4">
-                    {getTime(this.audio.currentTime)}
+                    {currentTime ? currentTime : '0:00'}
                 </div>
 
                 <div className="slide-container">
@@ -127,7 +129,7 @@ class FooterPlayer extends Component {
                 </div>
 
                 <div className="footer-player-time ml-4">
-                    {getTime(this.audio.duration)}
+                    {duration ? duration : '0:00'}
                 </div>
                 </div>
 

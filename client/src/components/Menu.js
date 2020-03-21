@@ -1,8 +1,21 @@
 import React, { Component } from 'react';
 import { Nav, NavItem, NavLink } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { connect } from 'react-redux';
+import { logoutUser } from '../actions/authActions';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 
 class Menu extends Component {
+    static propTypes = {
+        logoutUser: PropTypes.func.isRequired
+    };
+    
+    click = (e) => {
+        this.props.logoutUser();
+        this.props.history.push("/login");
+    }
+
     render () {
         return (
             <Nav vertical id="sidebar">
@@ -30,7 +43,7 @@ class Menu extends Component {
 
                 <NavItem>
                     
-                    <NavLink href="#" className="sidebarItem">
+                    <NavLink href="#" className="sidebarItem" onClick={this.click}>
                         <FontAwesomeIcon fixedWidth icon="sign-out-alt" size="lg" className="sidebarIcon" />
                         Logout
                     </NavLink>
@@ -68,4 +81,4 @@ class Menu extends Component {
     }
 }
 
-export default Menu;
+export default withRouter(connect(null, { logoutUser })(Menu));
