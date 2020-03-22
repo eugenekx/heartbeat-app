@@ -1,9 +1,12 @@
-import { GET_REVIEW_SONG } from './types';
+import { GET_REVIEW_SONG, REVIEW_SONG_LOADING } from './types';
 import axios from 'axios';
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 
 export const getReviewSong = id => (dispatch, getState) => {
+    // User loading
+    dispatch({ type: REVIEW_SONG_LOADING });
+
     axios
         .get(`/api/songs/${id}`, tokenConfig(getState))
         .then(res =>

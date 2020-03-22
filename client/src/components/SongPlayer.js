@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Col, Row } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+import { connect } from 'react-redux';
 
 class SongPlayer extends Component {
     render() {

@@ -51,14 +51,15 @@ class FooterPlayer extends Component {
     componentDidMount() {
         this.props.getReviewSong("5e677d5010cde82f103af417");
 
-        console.log(this.props.song.song);
 
         this.audio.addEventListener("timeupdate", e => {
             var v = Math.floor(e.target.currentTime / e.target.duration * 1000)
             this.setState({
               sliderValue: v
             });
-            document.getElementById('songRange').style.background = `linear-gradient(90deg, #E61B4C ${v/10}%, #5D5D5D ${v/10}%)`;
+            var c = document.getElementById('songRange')
+            if (c)
+                c.style.background = `linear-gradient(90deg, #E61B4C ${v/10}%, #5D5D5D ${v/10}%)`;
         });
 
         this.startTimer();
@@ -66,15 +67,15 @@ class FooterPlayer extends Component {
     
       componentWillUnmount() {
         this.audio.removeEventListener("timeupdate", () => {});
+        this.audio.src = null;
       }
-
     handleSliderChange = (e) => {
-        console.log(this.props.song.song.artwork);
         var v = e.target.value;
         this.setState({
             sliderValue: v
         });
-        this.audio.currentTime = this.audio.duration * v / 1000; 
+        if (this.audio.src)
+            this.audio.currentTime = this.audio.duration * v / 1000; 
         //var color = 'linear-gradient(90deg, #E61B4C' + e.target.value + '%, #5D5D5D ' + e.target.value + '%)';
         e.target.style.background = `linear-gradient(90deg, #E61B4C ${v}%, #5D5D5D ${v}%)`;
     }
@@ -107,6 +108,7 @@ class FooterPlayer extends Component {
         const duration = getTime(this.audio.duration);
         return(
             <footer className="footerPlayer text-white">
+                { }
                 <img src={song.artwork ? song.artwork : "userpic.png"} alt="avatar" className="artwork-footer" />
                 <div className="footer-artist-name">{song.artistName ? song.artistName : '-'}
                                 <div className="footer-track-name">{song.name ? song.name : '-' }</div>
@@ -125,7 +127,7 @@ class FooterPlayer extends Component {
                 </div>
 
                 <div className="slide-container">
-                    <input type="range" min="1" max="1000" value={this.state.sliderValue} id="songRange" class="slider" onChange={this.handleSliderChange}/>
+                    <input type="range" min="1" max="1000" value={this.state.sliderValue} id="songRange" className="slider" onChange={this.handleSliderChange}/>
                 </div>
 
                 <div className="footer-player-time ml-4">
@@ -138,7 +140,7 @@ class FooterPlayer extends Component {
                         <FontAwesomeIcon icon={['fas', 'thumbs-down']} className="mr-5 inactive" id="td" size="lg" />
 
                 <FontAwesomeIcon icon="volume-up" size="lg" className="mr-3"/>
-                <input type="range" min="1" max="100" value={this.state.volumeValue} id="volumeRange" class="volumeSlider" onChange={this.handleVolumeSliderChange}/>
+                <input type="range" min="1" max="100" value={this.state.volumeValue} id="volumeRange" className="volumeSlider" onChange={this.handleVolumeSliderChange}/>
                 </div>
 
                 

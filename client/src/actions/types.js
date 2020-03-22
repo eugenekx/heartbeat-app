@@ -1,4 +1,5 @@
 export const GET_REVIEW_SONG = 'GET_REVIEW_SONG';
+export const REVIEW_SONG_LOADING = 'REVIEW_SONG_LOADING';
 export const USER_LOADED = 'USER_LOADED';
 export const USER_LOADING = 'USER_LOADING';
 export const AUTH_ERROR = 'AUTH_ERROR';
