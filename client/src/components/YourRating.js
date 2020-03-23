@@ -33,10 +33,10 @@ class YourRating extends Component {
 
     onSubmitTrack = (e) => {
         e.preventDefault();
-
+ 
         const data = new FormData();
-        data.append('artwork', this.state.selectedArtworkFile);
-        axios.post('/upload', data, { 
+        data.append('audio', this.state.selectedAudioFile);
+        axios.post('/upload/audio', data, { 
             // receive two    parameter endpoint url ,form data
         })
         .then(res => { // then print response status
@@ -89,7 +89,7 @@ class YourRating extends Component {
                                     <Label for="audio">
                                         Upload Audio
                                     </Label>
-                                    <Input id="audio" type="file" onChange={this.onChangeAudio} />
+                                    <Input id="audio" type="file" name="audio" onChange={this.onChangeAudio} />
                                 </FormGroup>
                             </Form>     
                         </ModalBody>  
