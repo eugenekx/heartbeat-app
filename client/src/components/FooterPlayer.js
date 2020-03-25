@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { connect } from 'react-redux';
-import { getReviewSong } from '../actions/songActions';
+import { getReviewSong, changeDuration, changeCurrentTime, playerTogglePlay, playerToggleSeek } from '../actions/songActions';
 import PropTypes from 'prop-types';
 
 function getTime(time) {
@@ -16,7 +16,6 @@ function getTime(time) {
 
 class FooterPlayer extends Component {
     state = {
-        play: false,
         sliderValue: 1,
         volumeValue: 100,
         secondsLeft: 5,
@@ -36,9 +35,10 @@ class FooterPlayer extends Component {
         document.getElementById('tu').classList.remove('inactive');
         document.getElementById('td').classList.remove('inactive');
     }
+
     timer = () => {
         var newCount = this.state.secondsLeft;
-        if (this.state.play) {
+        if (this.props.song.isPlaying) {
             newCount = newCount - 1;
         }
         if (newCount >= 0) {
@@ -47,65 +47,65 @@ class FooterPlayer extends Component {
             this.stopTimer();
         }
     }
-
-    componentDidMount() {
-        this.props.getReviewSong("5e677d5010cde82f103af417");
-
-
-        this.audio.addEventListener("timeupdate", e => {
-            var v = Math.floor(e.target.currentTime / e.target.duration * 1000)
-            this.setState({
-              sliderValue: v
-            });
-            var c = document.getElementById('songRange')
+    componentDidUpdate(prevProps) {
+        
+        if (this.props.song.currentTime != prevProps.song.currentTime && this.props.song.duration) {
+            var v = Math.floor(this.props.song.currentTime / this.props.song.duration * 1000)
+            //console.log('v:' + v);
+            if (v != this.state.sliderValue) {
+                this.setState({
+                    sliderValue: v
+                });
+            }
+        }
+        
+        
+        var c = document.getElementById('songRange')
             if (c)
                 c.style.background = `linear-gradient(90deg, #E61B4C ${v/10}%, #5D5D5D ${v/10}%)`;
-        });
+    }
 
+    componentDidMount() {
         this.startTimer();
       }
-    
-      componentWillUnmount() {
-        this.audio.removeEventListener("timeupdate", () => {});
-        this.audio.src = null;
-      }
+
     handleSliderChange = (e) => {
         var v = e.target.value;
-        this.setState({
-            sliderValue: v
-        });
-        if (this.audio.src)
-            this.audio.currentTime = this.audio.duration * v / 1000; 
+        if (this.props.song.currentTime) {
+            this.props.changeCurrentTime(this.props.song.duration / 1000 * v);
+            this.props.playerToggleSeek();
+        }
+            
         //var color = 'linear-gradient(90deg, #E61B4C' + e.target.value + '%, #5D5D5D ' + e.target.value + '%)';
         e.target.style.background = `linear-gradient(90deg, #E61B4C ${v}%, #5D5D5D ${v}%)`;
     }
 
-        
+    handleSliderInput = (e) => {
+        var v = e.target.value;
+        e.target.style.background = `linear-gradient(90deg, #E61B4C ${v}%, #5D5D5D ${v}%)`;
+    }
+
     handleVolumeSliderChange = (e) => {
         var v = e.target.value;
         this.setState({
             volumeValue: v
         });
-        this.audio.volume = v / 100;
+        //this.audio.volume = v / 100;
         //var color = 'linear-gradient(90deg, #E61B4C' + e.target.value + '%, #5D5D5D ' + e.target.value + '%)';
         e.target.style.background = `linear-gradient(90deg, #E61B4C ${v}%, #5D5D5D ${v}%)`;
     }
 
     togglePlay = (e) => {
-        if (!this.state.play && this.audio.src === '') {
-            this.audio.src = this.props.song.song.filename;
-        }
-
-        this.state.play ? this.audio.pause() : this.audio.play();
-        this.setState({ play: !this.state.play });
-        
+        this.props.playerTogglePlay();
     }
 
-    
     render() {
         const { song } = this.props.song;
-        const currentTime = getTime(this.audio.currentTime);
-        const duration = getTime(this.audio.duration);
+        const { isPlaying } = this.props.song;
+
+        const duration = getTime(this.props.song.duration);
+        const currentTime = getTime(this.props.song.currentTime);
+        
         return(
             <footer className="footerPlayer text-white">
                 { }
@@ -118,7 +118,7 @@ class FooterPlayer extends Component {
                 <FontAwesomeIcon icon="backward" size="lg" className=""/>
                 <button className="footer-player-button" onClick={this.togglePlay}>
                 
-                {this.state.play ? <FontAwesomeIcon icon="pause" size="lg" className="ml-4"/> : <FontAwesomeIcon icon="play" size="lg" className="ml-4"/>}
+                {isPlaying ? <FontAwesomeIcon icon="pause" size="lg" className="ml-4"/> : <FontAwesomeIcon icon="play" size="lg" className="ml-4"/>}
                 </button>
                 
                 <FontAwesomeIcon icon="forward" size="lg" className="ml-4"/>
@@ -127,7 +127,7 @@ class FooterPlayer extends Component {
                 </div>
 
                 <div className="slide-container">
-                    <input type="range" min="1" max="1000" value={this.state.sliderValue} id="songRange" className="slider" onChange={this.handleSliderChange}/>
+                    <input type="range" min="1" max="1000" value={this.state.sliderValue} id="songRange" className="slider" onChange={this.handleSliderChange} onInput={this.handleSliderInput}/>
                 </div>
 
                 <div className="footer-player-time ml-4">
@@ -153,14 +153,20 @@ class FooterPlayer extends Component {
 
 FooterPlayer.propTypes = {
     getReviewSong: PropTypes.func.isRequired,
-    song: PropTypes.object.isRequired
+    changeDuration: PropTypes.func.isRequired,
+    changeCurrentTime: PropTypes.func.isRequired,
+    playerTogglePlay: PropTypes.func.isRequired,
+    playerToggleSeek: PropTypes.func.isRequired,
+    song: PropTypes.object.isRequired,
+    msg: PropTypes.string.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    song: state.song
+    song: state.song,
+
 });
 
 export default connect(
     mapStateToProps, 
-    { getReviewSong }
+    { getReviewSong, changeCurrentTime, changeDuration, playerTogglePlay, playerToggleSeek }
     )(FooterPlayer);
