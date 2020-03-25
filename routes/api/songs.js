@@ -8,7 +8,7 @@ const Song = require('../../models/Song');
 // @desc    Get Song By ID
 // @access  Private
 router.get('/:id', auth, (req, res) => {
-    Item.findById(req.params.id)
+    Song.findById(req.params.id)
         .then(song => res.json(song))
 });
 
@@ -26,15 +26,5 @@ router.post('/', auth, (req, res) => {
     newSong.save()
         .then(song => res.json(song));
 });
-
-// @route   DELETE api/songs
-// @desc    Delete Item
-// @access  Private
-router.delete('/:id', auth, (req, res) => {
-    Song.findById(req.params.id)
-    .then(song => song.remove().then(() => res.json({success: true})))
-    .catch(err => res.status(404).json({success: false}));
-})
-
 
 module.exports = router;

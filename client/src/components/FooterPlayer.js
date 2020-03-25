@@ -135,9 +135,9 @@ class FooterPlayer extends Component {
                 </div>
                 </div>
 
-                <div className="footer-controls ml-auto mr-5">
-                <FontAwesomeIcon icon={['fas', 'thumbs-up']} className="mr-4 inactive" id="tu" size="lg" />
-                        <FontAwesomeIcon icon={['fas', 'thumbs-down']} className="mr-5 inactive" id="td" size="lg" />
+                <div className="footer-controls mr-5 ml-auto">
+                <FontAwesomeIcon icon={['fas', 'thumbs-up']} className="mr-4 inactive d-none" id="tu" size="lg" />
+                        <FontAwesomeIcon icon={['fas', 'thumbs-down']} className="mr-5 inactive d-none" id="td" size="lg" />
 
                 <FontAwesomeIcon icon="volume-up" size="lg" className="mr-3"/>
                 <input type="range" min="1" max="100" value={this.state.volumeValue} id="volumeRange" className="volumeSlider" onChange={this.handleVolumeSliderChange}/>
