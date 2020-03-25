@@ -31,7 +31,7 @@ class App extends Component {
   componentDidMount() {
     store.dispatch(loadUser());
   }
-
+  
   render() {
     return (
     <Provider store={store}>
@@ -55,22 +55,22 @@ const Review = () => (
 
   <Container id="main">
     <AppNavbar />
-    <Container className="ml-3">
+    <Container className="review-container">
       <Row>
-        <Col>
+        <div className="review-page">
           <SongPlayer />
           <Row>
-            <Col xs="auto">
-              <ArtistInfo />
-            
+            <ArtistInfo />
+            <Col className="px-0 mx-0">
+            <YourRating />
             </Col>
-              <YourRating />    
+                  
           </Row>
-        </Col>
+        </div>
 
-        <Col xs="auto" className="d-none d-lg-inline">
+        <div className="d-none d-lg-inline ml-auto">
           <GenresList />
-        </Col>
+        </div>
       </Row>
     </Container>
   </Container>

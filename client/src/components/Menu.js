@@ -26,7 +26,6 @@ class Menu extends Component {
 
                 <div className="catText">Main</div>
                 <NavItem>
-                    
                     <NavLink href="#" className="sidebarItem sidebarActive">
                         <FontAwesomeIcon fixedWidth icon="heartbeat" size="lg" className="sidebarIcon" />
                         Review
