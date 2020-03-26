@@ -65,13 +65,14 @@ var storage = multer.diskStorage({
 const db = require('./config/keys').mongoURI;
 // Connect to Mongo
 mongoose
-    .connect(db, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+    .connect(db, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false })
     .then(() => console.log('MongoDB connected...'))
     .catch(err => console.log(err));
 
-app.use('/api/songs', require('./routes/api/songs'));
 app.use('/api/users', require('./routes/api/users'));
+app.use('/api/songs', require('./routes/api/songs'));
 app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/genres', require('./routes/api/genres'));
 
 // Serve static assets if in production
 if(process.env.NODE_ENV === 'production') {
