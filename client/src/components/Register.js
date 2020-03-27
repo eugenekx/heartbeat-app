@@ -14,6 +14,10 @@ class Register extends Component {
         name: '',
         email: '',
         password: '',
+        bandcampLink: '',
+        spotifyLink: '',
+        facebookLink: '',
+        twitterLink: '',
         msg: null
     };
 
@@ -48,13 +52,17 @@ class Register extends Component {
     onSubmit = e => {
         e.preventDefault();
         
-        const { name, email, password } = this.state;
+        const { name, email, password, bandcampLink, spotifyLink, facebookLink, twitterLink } = this.state;
 
         // Create user object
         const newUser = {
             name,
             email,
-            password
+            password,
+            bandcampLink,
+            spotifyLink,
+            facebookLink,
+            twitterLink
         };
         
         // Attempt to register user
@@ -106,6 +114,58 @@ class Register extends Component {
                             name="password" 
                             type="password" 
                             placeholder="Password"
+                            onChange={this.onChange}
+                        />
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Label for="bandcamp">
+                            Bandcamp Link
+                        </Label>
+                        <Input 
+                            id="bandcamp" 
+                            name="bandcamp" 
+                            type="url" 
+                            placeholder="Bandcamp Link (optional)"
+                            onChange={this.onChange}
+                        />
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Label for="spotify">
+                            Spotify Link
+                        </Label>
+                        <Input 
+                            id="spotify" 
+                            name="spotify" 
+                            type="url" 
+                            placeholder="Spotify Link (optional)"
+                            onChange={this.onChange}
+                        />
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Label for="facebook">
+                            Facebook Link
+                        </Label>
+                        <Input 
+                            id="facebook" 
+                            name="facebook" 
+                            type="url" 
+                            placeholder="Facebook Link (optional)"
+                            onChange={this.onChange}
+                        />
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Label for="twitter">
+                            Twitter Link
+                        </Label>
+                        <Input 
+                            id="twitter" 
+                            name="twitter" 
+                            type="url" 
+                            placeholder="Twitter Link (optional)"
                             onChange={this.onChange}
                         />
                     </FormGroup>

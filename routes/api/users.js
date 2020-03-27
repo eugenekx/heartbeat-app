@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const secret = require('../../config/keys').secretJWT;
+const auth = require('../../middleware/auth');
 
 // Song Model
 const User = require('../../models/User');
@@ -12,7 +13,15 @@ const User = require('../../models/User');
 // @desc    Register User
 // @access  Public
 router.post('/', (req, res) => {
-    const { name, email, password } = req.body;
+    const { 
+        name, 
+        email, 
+        password,
+        bandcampLink,
+        spotifyLink,
+        facebookLink,
+        twitterLink
+    } = req.body;
 
     // Simple validation
     if(!name || !email || !password) {
@@ -27,7 +36,11 @@ router.post('/', (req, res) => {
             const newUser = new User({
                 name,
                 email,
-                password
+                password,
+                bandcampLink,
+                spotifyLink,
+                facebookLink,
+                twitterLink
             });
 
             // Create salt & hash
@@ -57,6 +70,30 @@ router.post('/', (req, res) => {
                 })
             })
         })
+});
+
+// @route   GET api/users
+// @desc    Get User By ID
+// @access  Private
+router.get('/:id', auth, (req, res) => {
+    User.findById(req.params.id)
+        .then(user => res.json(user))
+});
+
+// @route   POST api/users/update
+// @desc    Update User By ID
+// @access  Private
+router.post('/update/:id', auth, (req, res) => {
+    // if user doesn't exist
+    User.exists({ _id: req.params.id })
+        .then(exists => {
+            if (!exists) {
+                return res.status(400).json({ msg: 'User does not exist.' });
+            }
+        })
+
+    User.findByIdAndUpdate(req.params.id, req.body.updatedUser, {new: true}).select('-password')
+        .then(updUser => res.json(updUser));
 });
 
 module.exports = router;
