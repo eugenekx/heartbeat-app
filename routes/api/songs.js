@@ -4,6 +4,7 @@ const auth = require('../../middleware/auth');
 
 // Song Model
 const Song = require('../../models/Song');
+const User = require('../../models/User');
 
 // @route   GET api/songs
 // @desc    Get Song By ID
@@ -14,10 +15,10 @@ router.get('/:id', auth, (req, res) => {
 });
 
 // @route   GET api/songs/user
-// @desc    Get Song By ID
+// @desc    Get Song List For User
 // @access  Private
-router.get('/user/:id', auth, (req, res) => {
-    Song.find({ user: req.params.id })
+router.get('/user/', auth, (req, res) => {
+    Song.find({ user: req.user.id })
         .then( result => res.json(result));
 });
 
@@ -25,14 +26,14 @@ router.get('/user/:id', auth, (req, res) => {
 // @desc    Get Song For Review
 // @access  Private
 router.get('/review/:genre_id', auth, (req, res) => {
-    // query: GET ONE RANDOM WHERE genre id = song genre AND song.reviewPoints > 0
+    // query: GET ONE RANDOM WHERE genre id = song genre AND song.reviewPoints > 0 AND not current user
 
-    Song.countDocuments({ genre: req.params.genre_id, reviewPoints: {$gt : 0}})
+    Song.countDocuments({ genre: req.params.genre_id, reviewPoints: {$gt : 0}, user: { $ne : req.user.id }})
         .then(count => {
             var random = Math.floor(Math.random() * count);
 
-            Song.findOne({ genre: req.params.genre_id, reviewPoints: {$gt : 0}}).skip(random).populate('user', '-password')
-            .then( result => res.json(result));
+            Song.findOne({ genre: req.params.genre_id, reviewPoints: {$gt : 0}, user: { $ne : req.user.id }}).skip(random).populate('user', '-password')
+                .then( result => res.json(result));
         });
 });
  
@@ -41,7 +42,7 @@ router.get('/review/:genre_id', auth, (req, res) => {
 // @access  Private
 router.post('/', auth, (req, res) => {
     const newSong = new Song({
-        user: req.body.user,
+        user: req.user.id,
         name: req.body.name,
         genre: req.body.genre,
         artistName: req.body.artistName,
@@ -58,8 +59,33 @@ router.post('/', auth, (req, res) => {
 // @desc    Update Song By ID
 // @access  Private
 router.post('/update/:id', auth, (req, res) => {
+    Song.exists({ _id: req.params.id })
+        .then(exists => {
+            if (!exists) {
+                return res.status(400).json({ msg: 'Song does not exist.' });
+            }
+        })
+
     Song.findByIdAndUpdate(req.params.id, req.body.updatedSong, {new: true})
         .then(updSong => res.json(updSong));
 });
 
+
+// @route   POST api/songs/addpoint
+// @desc    Add Point From User To Song
+// @access  Private
+router.post('/addpoint/:id', auth, (req, res) => {
+    Song.findById(req.params.id)
+        .then(song => {
+            if (song.user !== req.user.id) {
+                return res.status(403).json({ msg: "Can't transfer points to another user's song"});
+            }
+
+            User.findByIdAndUpdate(user, { $inc: { points: -1 } }, {new: true})
+                .then( (newUser) => console.log('New user balance: ' + newUser.points));
+            song.reviewPoints.$inc();
+            song.save()
+                .then( () => console.log('New song balance: ' + song.points));
+        })
+})
 module.exports = router;

@@ -7,6 +7,11 @@ const ReviewSchema = new Schema({
         ref: 'song',
         required: true,
     },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+        required: true
+    },
     text: {
         type: String,
         required: true,
@@ -20,6 +25,11 @@ const ReviewSchema = new Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    date: {
+        type: date,
+        required: true,
+        default: Date.now()
     }
 });
 

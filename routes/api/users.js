@@ -84,6 +84,14 @@ router.get('/:id', auth, (req, res) => {
 // @desc    Update User By ID
 // @access  Private
 router.post('/update/:id', auth, (req, res) => {
+    // if user doesn't exist
+    User.exists({ _id: req.params.id })
+        .then(exists => {
+            if (!exists) {
+                return res.status(400).json({ msg: 'User does not exist.' });
+            }
+        })
+
     User.findByIdAndUpdate(req.params.id, req.body.updatedUser, {new: true}).select('-password')
         .then(updUser => res.json(updUser));
 });
