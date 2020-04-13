@@ -16,7 +16,7 @@ export const getReviewSong = id => (dispatch, getState) => {
     dispatch({ type: REVIEW_SONG_LOADING });
 
     axios
-        .get(`/api/songs/${id}`, tokenConfig(getState))
+        .get(`/api/songs/review/${id}`, tokenConfig(getState))
         .then(res =>
             dispatch({
                 type: GET_REVIEW_SONG,

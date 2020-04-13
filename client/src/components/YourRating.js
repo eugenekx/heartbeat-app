@@ -1,108 +1,150 @@
 import React, { Component, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios'; 
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 
+
+
+import { connect } from 'react-redux';
 
 class YourRating extends Component {
     state = {
-        modal: false,
-        selectedAudioFile: null,
-        selectedArtworkFile: null,
+        text: '',
+        isReviewed: null
     }
 
-    toggle = () => { this.setState({ modal: !this.state.modal }); }
-
-    onChangeArtwork = (e) => {
-        console.log(e.target.files[0]);
-
-        this.setState({
-            selectedArtworkFile: e.target.files[0],
-            loadedArtwork: 0,
-        })
+    componentDidMount() {
+        if (this.state.isReviewed == null && this.props.song.song._id) {
+            const song = this.props.song.song._id;
+            axios
+                .get(`api/reviews/is_reviewed/${song}`, this.getToken())
+                .then((res) => this.setState({isReviewed: res.data}));
+        }
     }
 
-    onChangeAudio = (e) => {
-        console.log(e.target.files[0]);
-
-        this.setState({
-            selectedAudioFile: e.target.files[0],
-            loadedAudio: 0,
-        })
+    componentDidUpdate(prevProps) {
+        if (prevProps.song.song._id !== this.props.song.song._id) {
+            if (this.props.song.song._id) {
+                const song = this.props.song.song._id;
+                axios
+                    .get(`api/reviews/is_reviewed/${song}`, this.getToken())
+                    .then((res) => this.setState({isReviewed: res.data}));
+            }
+        }
     }
 
-    onSubmitTrack = (e) => {
-        e.preventDefault();
- 
-        const data = new FormData();
-        data.append('audio', this.state.selectedAudioFile);
-        axios.post('/upload/audio', data, { 
-            // receive two    parameter endpoint url ,form data
-        })
-        .then(res => { // then print response status
-            console.log(res.data);
-         })
+    componentWillUnmount() {
+        console.log('bye')
+    }
 
-         this.toggle();
+    onTextAreaChange = (e) => {
+        this.setState({text: e.target.value})
+    }
+
+    onLike = () => {
+        const user = this.props.auth.user._id;
+        const song = this.props.song.song._id;
+        const text = this.state.text; 
+        const rating = true;
+
+        if (!user || !song ) {
+            return
+        }
+
+        const body = JSON.stringify({ user, song, text, rating });
+
+        axios
+            .post(`/api/reviews`, body, this.getToken())
+            .then(res =>
+                this.setState({isReviewed: true}));
+    }
+
+    onDislike = () => {
+        const user = this.props.auth.user._id;
+        const song = this.props.song.song._id;
+        const text = this.state.text; 
+        const rating = false;
+
+        if (!user || !song ) {
+            return
+        }
+
+        const body = JSON.stringify({ user, song, text, rating });
+
+        axios
+            .post(`/api/reviews`, body, this.getToken())
+            .then(res =>
+                this.setState({isReviewed: true}));
+    }
+
+    getToken = () => {
+        // Get token from local storage
+        const token = this.props.auth.token;
+
+        // Headers
+        const config = {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+
+        // If token, add to headers
+        if(token) {
+            config.headers['x-auth-token'] = token;
+        }
+
+        return config;
+    }
+
+    unreviewedPage = () => {
+        return (
+            <div className="text-white your-rating">
+                <p className="your-rating-h">Your Review: </p>
+                <textarea className="text-area" onChange={this.onTextAreaChange} placeholder="What do you think about the song? (optional)"></textarea>
+                    <div className="review-buttons mt-3">
+                        <button className="rate-button" onClick={this.onLike}><FontAwesomeIcon icon={['fas', 'thumbs-up']} className="mr-1 mr-3" size="lg" /></button>
+                        <button className="rate-button" onClick={this.onDislike}><FontAwesomeIcon icon={['fas', 'thumbs-down']} className="mr-1" size="lg" /></button>
+                    </div>
+            </div>
+        )
+    }
+
+    reviewedPage = () => {
+        return (
+            <h3 className="text-white p-5">Your review has been submitted!</h3>
+        )
+    }
+
+    loadingPage = () => {
+        return (
+            <h3 className="text-white p-5">Loading...</h3>
+        )
+    }
+
+    getPage = () => {
+        switch(this.state.isReviewed) {
+            case false:
+                return this.unreviewedPage();
+            case true:
+                return this.reviewedPage();
+            default:
+                return this.loadingPage();
+        }
     }
 
     render() {
+        const page = this.getPage();
         return(
-            <div className="text-white your-rating">
-                <p className="your-rating-h">Your Review: </p>
-                <textarea className="text-area" placeholder="What do you think about the song? (optional)"></textarea>
-                    <div className="review-buttons mt-3">
-                        <FontAwesomeIcon icon={['fas', 'thumbs-up']} className="mr-1 mr-3 inactive" size="lg" />
-                        <FontAwesomeIcon icon={['fas', 'thumbs-down']} className="mr-1 inactive" size="lg" />
-                            
-                    </div>
-                    <button className="btn btn-dark mt-3" onClick={this.toggle}> Upload </button>
-                    <Modal isOpen={this.state.modal} toggle={this.toggle}> 
-                        <ModalHeader>
-                            Add Track
-                        </ModalHeader>  
-
-                        <ModalBody>
-                            <Form>
-                                <FormGroup>
-                                    <Label for="artistName">
-                                        Artist Name
-                                    </Label>
-                                    <Input id="artistName" type="text" />
-                                </FormGroup>
-
-                                <FormGroup>
-                                    <Label for="trackName">
-                                        Track Name
-                                    </Label>
-                                    <Input id="trackName" type="text" />
-                                </FormGroup>
-
-                                <FormGroup>
-                                    <Label for="artwork">
-                                        Upload Artwork
-                                    </Label>
-                                    <Input id="artwork" type="file" name="artwork" onChange={this.onChangeArtwork} />
-                                </FormGroup>
-
-                                <FormGroup>
-                                    <Label for="audio">
-                                        Upload Audio
-                                    </Label>
-                                    <Input id="audio" type="file" name="audio" onChange={this.onChangeAudio} />
-                                </FormGroup>
-                            </Form>     
-                        </ModalBody>  
-
-                        <ModalFooter>
-                        <button className="btn btn-primary" onClick={this.onSubmitTrack}>Submit</button>       
-                        <button className="btn btn-secondary" onClick={this.toggle}>Close</button>
-                        </ModalFooter>      
-                    </Modal>
+            <div>
+                { page }
             </div>
-            
         );
     }
 }
 
-export default YourRating;
+const mapStateToProps = state => ({
+    auth: state.auth,
+    song: state.song
+});
+
+
+export default connect(mapStateToProps, null)(YourRating);

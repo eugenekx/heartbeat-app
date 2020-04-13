@@ -109,7 +109,7 @@ class FooterPlayer extends Component {
         return(
             <footer className="footerPlayer text-white">
                 { }
-                <img src={song.artwork ? song.artwork : "userpic.png"} alt="avatar" className="artwork-footer" />
+                <img src={song.artwork ? `/songdata/${song.artwork}` : "userpic.png"} alt="avatar" className="artwork-footer" />
                 <div className="footer-artist-name">{song.artistName ? song.artistName : '-'}
                                 <div className="footer-track-name">{song.name ? song.name : '-' }</div>
                 </div>

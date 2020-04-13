@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {Form, FormGroup, Label, Input, Button, Alert } from 'reactstrap';
 import { login } from '../actions/authActions';
+import { Link } from 'react-router-dom';
 
 import { clearErrors } from '../actions/errorActions';
 
@@ -94,7 +95,10 @@ class Login extends Component {
 
                     <Button className="btn-primary" block>Log in</Button>
                     
+                    
                 </Form>
+                <div className="mt-5 align-items-center"><Link to="/register/">Register</Link></div>
+                
             </div>  
         );
     }

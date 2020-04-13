@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { connect } from 'react-redux';
 
 class ArtistInfo extends Component {
+    
     render() {
+        const { song } = this.props.song;
         return(
             <div className="text-white artist-info">
-                <img src="userpic.png" alt="avatar" className="artist-avatar" />
-                <div className="mt-3 artist-name mb-1">Kevin Parker</div>
+                <img src={ song ? `/songdata/${song.user.avatar}` : "userpic.png"} alt="avatar" className="artist-avatar" />
+                <div className="mt-3 artist-name mb-1">{ song ? song.user.name : '-' }</div>
                 <div className="links-wrap">
                     <a href="#" className="artist-links">
                         <FontAwesomeIcon icon={['fab', 'bandcamp']} className="mr-1" />
@@ -32,4 +34,8 @@ class ArtistInfo extends Component {
     }
 }
 
-export default ArtistInfo;
+const mapStateToProps = (state) => ({
+    song: state.song
+});
+
+export default connect(mapStateToProps, null)(ArtistInfo);

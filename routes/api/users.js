@@ -16,6 +16,7 @@ router.post('/', (req, res) => {
     const { 
         name, 
         email, 
+        avatar,
         password,
         bandcampLink,
         spotifyLink,
@@ -36,6 +37,7 @@ router.post('/', (req, res) => {
             const newUser = new User({
                 name,
                 email,
+                avatar,
                 password,
                 bandcampLink,
                 spotifyLink,

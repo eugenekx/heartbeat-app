@@ -33,19 +33,43 @@
 }
 
 .activeMarker {
+    transition: all .3s ease;
+    width:5px;
+    height:17px;
+    background-color: transparent;
+    position:absolute;
+    top:10px;
+    left: 0px;  
+}
+
+.sidebarActive .activeMarker {
     width:5px;
     height:17px;
     background-color: #E61B4C;
     position:absolute;
-    top:150px;  
+    top:10px;
+    left: 0px;  
 }
 
 .sidebarItem {
+    position: relative;
+    display: block;
+    padding: .5rem 1rem;
     color: #5D5D5D;
     font-size: 10pt;
     font-family: "Montserrat";
     font-style: normal;
     font-weight: 600;
+}
+
+.rate-button {
+    transition: all .3s ease;
+    color: white;
+}
+
+.rate-button:hover {
+    color: #E61B4C !important;
+    transition: all .3s ease;
 }
 
 .sidebarActive {
@@ -173,13 +197,81 @@ a:hover {
     color: #E61B4C !important;
 }
 
-a:hover .username {
+
+.select-avatar-wrapper {
+    transition: all .3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.select-avatar-wrapper:hover {
+    cursor: pointer;
+}
+.select-avatar-wrapper:hover .profile-avatar {
+    filter: brightness(50%);
+}
+
+
+.select-avatar-upload {
+    display: none;
+}
+
+
+.select-avatar-button {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.select-avatar-button .fa-icon {
+    font-size: 40pt;
+	position: absolute;
+    top: 50%;  /* position the top  edge of the element at the middle of the parent */
+    left: 50%; /* position the left edge of the element at the middle of the parent */
+
+    transform: translate(-50%, -50%); /* This is a shorthand of
+                                         translateX(-50%) and translateY(-50%) */
+	opacity: 0;
+	transition: all .3s ease;
+	color: #ffffff;
+}
+
+.select-avatar-button:hover .fa-icon {
+    opacity: 1;
+}
+
+.profile-avatar {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border:3px solid #E61B4C;
+    transition: all .3s ease;
+}
+
+
+button {
+    text-decoration: none;
+    border: none;
+    background-color: transparent;
+    outline:none;
+}
+
+button:focus {
+    outline: none !important;
+}
+
+button:hover .username {
     transition: color 0.17s ease-out; 
     color: #E61B4C;
     text-decoration: none;
 }
 
-a:hover .avatar {
+button:hover .avatar {
     border-width: 3px;
 }
 
@@ -193,7 +285,7 @@ a, a:link, a:active, a:visited {
     transition: color 0.17s ease-out; 
    }
 
-a .avatar, a:hover .avatar {
+button .avatar, button:hover .avatar {
     transition: border-width 0.17s ease-out;
 }
 
@@ -208,6 +300,15 @@ a .avatar, a:hover .avatar {
 
 .genresLink {
     color: #5d5d5d;
+}
+
+.indexGenresLink {
+    color: #E61B4C;
+}
+
+.indexGenresLink:hover {
+    transition: color 0.17s ease-out; 
+    color: #ffffff !important;
 }
 
 a:focus {

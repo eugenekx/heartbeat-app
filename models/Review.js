@@ -14,7 +14,6 @@ const ReviewSchema = new Schema({
     },
     text: {
         type: String,
-        required: true,
         default: ''
     },
     rating: {
@@ -27,9 +26,9 @@ const ReviewSchema = new Schema({
         default: false
     },
     date: {
-        type: date,
+        type: Date,
         required: true,
-        default: Date.now()
+        default: Date.now   
     }
 });
 

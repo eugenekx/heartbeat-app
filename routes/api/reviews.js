@@ -10,16 +10,29 @@ const Song = require('../../models/Song');
 // @route   GET api/reviews
 // @desc    Get Review By ID
 // @access  Private
-router.get('/:id', auth, (req, res) => {
+router.get('/id/:id', auth, (req, res) => {
     Review.findById(req.params.id)
         .then(review => res.json(review))
+});
+
+// @route   GET api/reviews/is-reviewed
+// @desc    Is Song Reviewed by User previously?
+// @access  Private
+router.get('/is_reviewed/:id', auth, (req, res) => {
+    Review.exists({ user: req.user.id, song: req.params.id }, (err, result) => {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send(result);
+        }
+    });
 });
 
 // @route   GET api/reviews/song
 // @desc    Get Review List For Song
 // @access  Private
 router.get('/song/:id', auth, (req, res) => {
-    Review.find({ song: req.params.id })
+    Review.find({ song: req.params.id }).populate('user')
         .then(reviews => res.json(reviews));
 })
 
@@ -58,11 +71,9 @@ router.post('/', auth, (req, res) => {
         rating
     } = req.body;
 
-    if(user === req.user.id) {
-        return res.status(400).json({ msg: "Can't review your own song."});
-    }
+    console.log(req.body);
 
-    if(!song || !user || !rating) {
+    if(!song || !user || rating === null) {
         return res.status(400).json({ msg: "Please enter all fields."});
     }
 

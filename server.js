@@ -28,6 +28,17 @@ var storage = multer.diskStorage({
   });
   var upload = multer({ storage: storage });
 
+  app.post('/upload/avatar', upload.single('avatar'), (req, res, next) => {
+    const file = req.file
+    if (!file) {
+      const error = new Error('Please upload a file')
+      error.httpStatusCode = 400
+      return next(error)
+    }
+    res.send(res.req.file.filename); 
+    
+  })
+
   app.post('/upload/artwork', upload.single('artwork'), (req, res, next) => {
     const file = req.file
     if (!file) {
@@ -73,6 +84,7 @@ app.use('/api/users', require('./routes/api/users'));
 app.use('/api/songs', require('./routes/api/songs'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/genres', require('./routes/api/genres'));
+app.use('/api/reviews', require('./routes/api/reviews'));
 
 // Serve static assets if in production
 if(process.env.NODE_ENV === 'production') {

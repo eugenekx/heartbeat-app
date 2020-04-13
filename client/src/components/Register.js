@@ -4,10 +4,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import {Form, FormGroup, Label, Input, Button, Alert } from 'reactstrap';
-import { Redirect } from 'react-router-dom';
 import { register } from '../actions/authActions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { clearErrors } from '../actions/errorActions';
+import axios from 'axios';
 
 class Register extends Component {
     state = {
@@ -18,6 +19,8 @@ class Register extends Component {
         spotifyLink: '',
         facebookLink: '',
         twitterLink: '',
+        selectedAvatarFile: null,
+        avatar: null,
         msg: null
     };
 
@@ -27,6 +30,27 @@ class Register extends Component {
         register: PropTypes.func.isRequired,
         clearErrors: PropTypes.func.isRequired
     };
+
+    onChangeAvatar = (e) => {
+        console.log(e.target.files[0]);
+
+        this.setState({
+            selectedAvatarFile: e.target.files[0]
+        })
+
+        const avatarData = new FormData();
+        avatarData.append('avatar', e.target.files[0]);
+        axios.post('/upload/avatar', avatarData, { 
+            // receive two    parameter endpoint url ,form data
+        })
+        .then(res => { // then print response status
+            this.setState({avatar: res.data});
+        })
+    }
+
+    onAvatarClick = (e) => {
+        this.avatarInput.click();
+    }
 
     componentDidUpdate(prevProps) {
         const { error, isAuthenticated } = this.props;
@@ -52,11 +76,12 @@ class Register extends Component {
     onSubmit = e => {
         e.preventDefault();
         
-        const { name, email, password, bandcampLink, spotifyLink, facebookLink, twitterLink } = this.state;
+        const { name, avatar, email, password, bandcampLink, spotifyLink, facebookLink, twitterLink } = this.state;
 
         // Create user object
         const newUser = {
             name,
+            avatar,
             email,
             password,
             bandcampLink,
@@ -78,6 +103,15 @@ class Register extends Component {
             <div className="formContainer">
                 <h1>Register</h1>
                 { this.state.msg ? <Alert color="danger"> { this.state.msg } </Alert> : null }
+                
+                <div className="select-avatar-wrapper">
+                    <img src={this.state.avatar ? `/songdata/${this.state.avatar}` : "/userpic.png"} alt="avatar" className="profile-avatar" />
+                    <div className="select-avatar-button" onClick={this.onAvatarClick}>
+                        <FontAwesomeIcon fixedWidth icon="camera" size="lg" className="fa-icon" />
+	                </div>
+                    <input ref={(input) => { this.avatarInput = input; }} className="select-avatar-upload" type="file" accept="image/*" onChange={this.onChangeAvatar} />
+                </div>
+                
                 <Form onSubmit={this.onSubmit}>
                     <FormGroup>
                         <Label for="name">
