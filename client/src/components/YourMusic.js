@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 
 import { Link } from 'react-router-dom';
-import { EditableLabel } from 'editable-label-react';
+import EditableLabel from 'editable-label-react';
 import Progressor from '../lib/Progressor';
 
 function getTime(time) {
@@ -26,12 +26,15 @@ export class YourMusic extends Component {
         genresList: [],
         uploadedAudio: null,
         uploadedArtwork: null,
-        artistName: null,
-        name: null,
+        artistName: '',
+        name: '',
         genre: null,
         isSubmitting: true,
         song: null,
-        gotpng: false
+        gotpng: false,
+
+        currentTime: 0,
+        duration: 0
     }
 
     audio = new Audio();
@@ -157,6 +160,18 @@ export class YourMusic extends Component {
             })
 
             this.audio.src = '/songdata/' + this.state.uploadedAudio;
+            
+            this.audio.addEventListener('loadedmetadata',() => {
+                this.setState({
+                    currentTime: this.audio.currentTime,
+                    duration: this.audio.duration
+                });
+            },false);
+            this.audio.addEventListener('timeupdate', () => {
+                this.setState({
+                    currentTime: this.audio.currentTime
+                })
+            }, false);
 
         })
     }
@@ -202,8 +217,8 @@ export class YourMusic extends Component {
                     selectedArtworkFile: null,
                     uploadedAudio: null,
                     uploadedArtwork: null,
-                    artistName: null,
-                    trackName: null,
+                    artistName: '',
+                    trackName: '',
                     genre: null,
                     isSubmitting: null
                 });
@@ -217,6 +232,41 @@ export class YourMusic extends Component {
             })
 
         
+    }
+
+    onChangeArtistName= (e) => {
+        this.setState({
+            artistName: e.target.value
+        });
+    }
+
+    onChangeName= (e) => {
+        this.setState({
+            name: e.target.value
+        });
+    }
+
+    onClose = (e) => {
+        this.setState({
+            selectedAudioFile: null,
+            selectedArtworkFile: null,
+            uploadedAudio: null,
+            uploadedArtwork: null,
+            artistName: '',
+            trackName: '',
+            genre: null,
+            isSubmitting: null
+        });
+        this.toggle();
+    }
+
+    togglePlay = () => {
+        if (this.audio.paused)
+            this.audio.play();
+        else
+            this.audio.pause();
+        console.log(this.audio.duration);
+        console.log(this.audio.currentTime);
     }
 
     getToken = () => {
@@ -239,6 +289,8 @@ export class YourMusic extends Component {
     }
 
     render() {
+        const duration = getTime(this.state.duration);
+        const currentTime = getTime(this.state.currentTime);
         return (
             <Container className="review-container">
                 <h1 className="text-white font-display"><strong>Your Music</strong></h1>
@@ -262,41 +314,46 @@ export class YourMusic extends Component {
                             <Input id="artwork" type="file" accept="image/*" name="artwork" onChange={this.onChangeArtwork} className="d-none" />
                             
                             { this.state.uploadedAudio ?
-                            <div className="song-uploaded d-inline-block ml-3">
-                                
-                                <div>
-                                    <div className="player-row ml-3">
-                                        <button className="footer-player-button" onClick={this.togglePlay}>
-                                            <FontAwesomeIcon icon="play" size="lg" className="playButton mr-3"/>
-                                        </button>
+                                <div className="song-uploaded d-inline-block ml-3">
 
-                                        <div className="player-artist-name d-none">
-                                            <EditableLabel 
-                                                labelClassName="artist-name-label"
-                                                inputClassName="artist-name-input"
-                                                inputMaxLength="50"
-                                                inputWidth="200px"
-                                                inputHeight="25px"
-                                                value={this.state.artistName}
-                                            />
-                                            Sample Artist 
-                                            <FontAwesomeIcon icon="pen"  className="penIcon" />
-                                            <div className="d-block player-track-name d-none">
-                                                Sample Song  
-                                                <FontAwesomeIcon icon="pen" className="penIcon" />
+                                        <div className="player-row ml-3">
+                                            <button className="footer-player-button" onClick={this.togglePlay}>
+                                            {!this.audio.paused ? <FontAwesomeIcon icon="pause" size="lg" className="playButton mr-3"/> : <FontAwesomeIcon icon="play" size="lg" className="playButton mr-3"/>}
+                                            </button>
+
+                                            <div>
+                                                    <EditableLabel 
+                                                        labelClassName="player-artist-name cursor-text"
+                                                        inputClassName="artist-name-input"
+                                                        inputMaxLength="50"
+                                                        inputWidth="200px"
+                                                        inputHeight="25px"
+                                                        labelPlaceHolder="Click here to enter artist name"
+                                                        value={this.state.artistName}
+                                                        onChange={this.onChangeArtistName}
+                                                    />
+                                                    <EditableLabel 
+                                                        labelClassName="player-track-name cursor-text"
+                                                        inputClassName="track-name-input"
+                                                        labelPlaceHolder="Click here to enter track name"
+                                                        inputMaxLength="50"
+                                                        inputWidth="200px"
+                                                        inputHeight="25px"
+                                                        value={this.state.name}
+                                                        onChange={this.onChangeName}
+                                                    />
+
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div className="player-row">
-                                        <div className="mt-4 review-player-time-left">0:00</div>
-                                        <div id="wave_wrap">
-                                            <div className="player-row waveform" id="waveform" ref={(a) => { this.waveform = a; }}>{ this.state.gotpng ? null : 'LOADING'}<div id="waveform_hover"  ref={(a) => { this.waveformHover = a; }}></div></div>
+                                        
+                                        <div className="player-row">
+                                            <div className="mt-4 review-player-time-left">{ currentTime }</div>
+                                            <div id="wave_wrap">
+                                                <div className="player-row waveform" id="waveform" ref={(a) => { this.waveform = a; }}>{ this.state.gotpng ? null : 'LOADING'}<div id="waveform_hover"  ref={(a) => { this.waveformHover = a; }}></div></div>
+                                            </div>
+                                            <div className="mt-4 review-player-time-right">{ duration }</div>
                                         </div>
-                                        <div className="mt-4 review-player-time-right">0:00</div>
-                                    </div>
                                 </div>
-                            </div>
                             :
                             <label for="audio" className="add-song-placeholder d-inline-block ml-3">
                                 <div className="add-artwork-icon">
@@ -313,13 +370,15 @@ export class YourMusic extends Component {
                                             <option value={item._id} key={item._id}>{ item.text }</option>
                                         )}
                             </select>
+                            
+                            
                         </ModalBody>
 
                         <ModalFooter>
                         <button className="btn btn-danger" onClick={this.onSubmitTrack}>
                             SUBMIT
                         </button>       
-                        <button className="btn btn-secondary" onClick={this.toggle}>
+                        <button className="btn btn-secondary" onClick={this.onClose}>
                             CLOSE
                         </button>
                         </ModalFooter> 
