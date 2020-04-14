@@ -8,7 +8,7 @@ import Menu from './components/Menu';
 import AppNavbar from './components/AppNavbar';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause, faCamera} from '@fortawesome/free-solid-svg-icons'
+import { faPen, faPlus, faHeadphones, faFileImage, faFileAudio, faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause, faCamera} from '@fortawesome/free-solid-svg-icons'
 import { faBandcamp, faSpotify, faFacebook, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 import { Container, Row, Col } from 'reactstrap';
@@ -25,7 +25,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { loadUser } from './actions/authActions';
 
-library.add(faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faBandcamp, faSpotify, faFacebook, faTwitter, 
+library.add(faPen, faPlus, faHeadphones, faFileImage, faFileAudio, faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faBandcamp, faSpotify, faFacebook, faTwitter, 
             faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause, faCamera);
 
 class App extends Component {

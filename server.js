@@ -64,7 +64,7 @@ var storage = multer.diskStorage({
     const trackname = path.resolve(uploadDestination, res.req.file.filename);
     const jsonname = path.resolve(uploadDestination, id+'.json');
     const wave = getWaveformJSON(600, 100, trackname, id);
-    fs.writeFile(jsonname, JSON.stringify(wave), function(err) {
+    fs.writeFile(jsonname, wave, function(err) {
         if(err) {
             return console.log(err);
         }

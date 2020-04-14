@@ -139,7 +139,7 @@ class AppNavbar extends Component {
         const userPanel = (
             <Fragment>
                 <button onClick={this.toggle} className="ml-4 d-none d-md-inline">
-                        <img src={user.avatar ? `/songdata/${user.avatar}` : "userpic.png"} alt="avatar" className="avatar" />
+                        <img src={user.name ? `/songdata/${user.avatar}` : "userpic.png"} alt="avatar" className="avatar" />
                         <div className="username d-inline-block ml-2">
                             { user ? user.name : null }
                         </div>
@@ -155,7 +155,10 @@ class AppNavbar extends Component {
                 </Breadcrumb>
 
                 <div className="ml-auto">
-                    <span className="username mr-4">Points: {user ? user.points : '-'}</span>
+                    <span className="user-points mr-4">
+                        {user.name ? user.points : '-'}
+                        <FontAwesomeIcon icon="headphones" className="ml-2"/>
+                    </span>
                     <a href="#" className="notificationLink">
                         <FontAwesomeIcon icon="bell" size="lg" />
                     </a>
