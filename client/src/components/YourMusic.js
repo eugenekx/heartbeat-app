@@ -265,8 +265,6 @@ export class YourMusic extends Component {
             this.audio.play();
         else
             this.audio.pause();
-        console.log(this.audio.duration);
-        console.log(this.audio.currentTime);
     }
 
     getToken = () => {
@@ -293,7 +291,7 @@ export class YourMusic extends Component {
         const currentTime = getTime(this.state.currentTime);
         return (
             <Container className="review-container">
-                <h1 className="text-white font-display"><strong>Your Music</strong></h1>
+                <h1 className="text-white font-display animate-fadein"><strong>Your Music</strong></h1>
                     <Modal isOpen={this.state.modal} toggle={this.toggle} size="xl"> 
                         <ModalHeader>
                             Add Song

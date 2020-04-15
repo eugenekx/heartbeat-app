@@ -88,18 +88,32 @@ router.post('/update/:id', auth, (req, res) => {
 // @route   POST api/songs/addpoint
 // @desc    Add Point From User To Song
 // @access  Private
-router.post('/addpoint/:id', auth, (req, res) => {
+router.post('/addpoints/:id', auth, (req, res) => {
+    
+
     Song.findById(req.params.id)
         .then(song => {
-            if (song.user !== req.user.id) {
+            if (song.user != req.user.id) {
                 return res.status(403).json({ msg: "Can't transfer points to another user's song"});
             }
+            
+            const points = req.body.points - song.reviewPoints;
 
-            User.findByIdAndUpdate(user, { $inc: { points: -1 } }, {new: true})
+            User.findById(song.user)
+                .then((user) => {
+                    if (user.points < points) {
+                        return res.status(403).json({ msg: "User doesn't have enough points" });
+                    }
+                })
+
+            User.findByIdAndUpdate(song.user, { $inc: { points: -points } }, {new: true})
                 .then( (newUser) => console.log('New user balance: ' + newUser.points));
-            song.reviewPoints.$inc();
+            song.reviewPoints += points;
             song.save()
-                .then( () => console.log('New song balance: ' + song.points));
+                .then( () => {
+                    console.log('New song balance: ' + song.reviewPoints);
+                    return res.status(200).json({ msg: 'ok' }); 
+                });
         })
 })
 

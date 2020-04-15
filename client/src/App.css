@@ -299,10 +299,12 @@ button .avatar, button:hover .avatar {
 }
 
 .genresLink {
+    animation: fadein 0.5s ease-out;
     color: #5d5d5d;
 }
 
 .indexGenresLink {
+    animation: fadein 0.5s ease-out;
     color: #E61B4C;
 }
 
@@ -323,10 +325,10 @@ a:focus {
 }
 
 .player-row {
+    animation: fadein 0.5s ease-out;
     height: 90px;
     display: flex;
     align-items: center;
-    
 }
 
 
@@ -601,9 +603,11 @@ a:focus {
 
 .text-red {
     color: #E61B4C;
+    font-family: "Montserrat";
 }
 
 .yourMusicEntry {
+    animation: fadein 0.5s ease-out;
     transition: all .2s ease;
     cursor: pointer;
     font-size: 14pt;
@@ -842,6 +846,17 @@ a:focus {
     outline: none;
 }
 
+.points-input {
+    background: #201F26;
+    color: #fff;
+    font-size: 14pt;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 600;
+    border: 0px;
+    outline: none;
+}
+
 .nowrap {
     display: flex;
     flex-direction: row;
@@ -857,4 +872,43 @@ a:focus {
     font-family: "Montserrat";
     font-style: normal;
     font-weight: 700;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+
+
+.songinfo-artist-name-input {
+    background: #201F26;
+    color: #fff;
+    border: 0px;
+    outline: none;
+    letter-spacing: .5px;
+    font-size: 11pt;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 700;
+}
+
+.songinfo-track-name-input {
+    background: #201F26;
+    margin-top: -8px;
+    color: #fff;
+    font-size: 21pt;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 600;
+    border: 0px;
+    outline: none;
+}
+
+.animate-fadein {
+    animation: fadein 0.5s;
+}
+
+.points-label {
+    font-size: 14pt;
+    font-family: "Montserrat";
 }
