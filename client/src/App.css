@@ -24,6 +24,7 @@
 }
 
 #appNavbar {
+    animation: fadein 0.5s ease;
     background-color: #201F26;
     height: 60px;
 }
@@ -132,6 +133,7 @@
 }
 
 .myBreadcrumbItem {
+    animation: fadein 0.5s ease;
     color: #5D5D5D;
     font-size: 10pt;
     font-family: "Montserrat";
@@ -202,6 +204,24 @@ a:hover {
     transition: all .3s ease;
     overflow: hidden;
     position: relative;
+    margin-bottom: 1rem;
+}
+
+.logout-label {
+    vertical-align: middle;
+    transition: all .3s ease;
+    font-size: 12pt;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 500;
+    text-decoration: none;
+    color: white;
+    margin-left: 1rem;
+}
+
+.logout-label:hover {
+    transition: all .3s ease;
+    color: #E61B4C;
 }
 
 .select-avatar-wrapper:hover {
@@ -305,6 +325,7 @@ button .avatar, button:hover .avatar {
 
 .indexGenresLink {
     animation: fadein 0.5s ease-out;
+    margin-left: .25rem;
     color: #E61B4C;
 }
 
@@ -343,11 +364,11 @@ a:focus {
     font-family: "Montserrat";
     font-style: normal;
     font-weight: 700;
-    margin-bottom: -20px;
+    margin-bottom: -10px;
 }
 
 .player-track-name {
-    margin-top: -20px;
+    margin-top: -10px;
     color: #E61B4C;
     font-size: 21pt;
     font-family: "Montserrat";
@@ -382,6 +403,13 @@ a:focus {
 
 .artist-info {
     width: 180px;
+    margin-top: 2rem;
+    margin-left: 1rem;
+    text-align: center;
+}
+
+.artist-info-history {
+    width: 200px;
     margin-top: 2rem;
     margin-left: 1rem;
     text-align: center;
@@ -423,7 +451,6 @@ a:focus {
     margin-left: 2rem;
     padding-left: 0;
     padding-right: 2rem;
-
 }
 
 .your-rating-h {
@@ -447,6 +474,14 @@ a:focus {
     overflow: hidden;
     border-width: 0;
     color: white;
+}
+
+.text-field {
+    background-color: #201F26 !important;
+    border-radius: 5px !important;
+    border-width: 0 !important;
+    color: white !important;
+    margin-bottom: 2rem; 
 }
 
 .review-buttons {
@@ -622,6 +657,7 @@ a:focus {
     background: #2D2B36;
 }
 
+
 .yourMusicEntryCol {
     line-height: 70px;
     
@@ -759,7 +795,7 @@ a:focus {
 
 .custom-select {
     transition: all .3s ease;
-    background: #5D5D5C !important;
+    background: #201F26 !important;
     border: none !important;
     color: #fff !important;
     font-family: "Montserrat" !important;
@@ -911,4 +947,17 @@ a:focus {
 .points-label {
     font-size: 14pt;
     font-family: "Montserrat";
+}
+
+.no-text-provided {
+    animation: fadein 0.5s ease;
+    color: #5D5D5D;
+    font-size: 14pt;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 500;
+}
+
+.borderBottom {
+    border-bottom: 1px solid #5d5d5d;
 }

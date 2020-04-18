@@ -95,8 +95,6 @@ class SongPlayer extends Component {
 
     componentDidMount() {
         this.audio.addEventListener('timeupdate', this.seekListener)
-
-        this.props.getReviewSong(this.props.genre);
     }
 
     componentDidUpdate() {

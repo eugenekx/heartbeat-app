@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {Form, FormGroup, Label, Input, Button, Alert } from 'reactstrap';
 import { login } from '../actions/authActions';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import { clearErrors } from '../actions/errorActions';
 
@@ -12,7 +12,8 @@ class Login extends Component {
     state = {
         email: '',
         password: '',
-        msg: null
+        msg: null,
+        redirectToReferrer: false
     };
 
     static propTypes = {
@@ -35,7 +36,9 @@ class Login extends Component {
 
         // if authenticated, redirect
         if (isAuthenticated) {
-            this.props.history.push("/review");
+            this.setState(() => ({
+                redirectToReferrer: true
+              }))
         }
     }
     
@@ -62,6 +65,12 @@ class Login extends Component {
     }
 
     render() {
+        const { from } = this.props.location.state || { from: { pathname: '/' } }
+        const { redirectToReferrer } = this.state
+        if (redirectToReferrer === true) {
+            return <Redirect to={from} />  
+        }
+
         return(
             <div className="formContainer">
                 <h1>Log in</h1>

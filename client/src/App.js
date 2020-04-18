@@ -21,6 +21,8 @@ import YourMusic from './components/YourMusic';
 import Favorite from './components/Favorite';
 import History from './components/History';
 import SongInfo from './components/SongInfo';
+import ReviewedSong from './components/ReviewedSong';
+
 import { Provider } from 'react-redux';
 import store from './store';
 import { loadUser } from './actions/authActions';
@@ -45,6 +47,7 @@ class App extends Component {
             <PrivateRoute path="/your_music/song" component={SongInfo} />
             <PrivateRoute path="/favorite" exact component={Favorite} />
             <PrivateRoute path="/history" exact component={History} />
+            <PrivateRoute path="/history/review" exact component={ReviewedSong} />
             <Route path="/login" exact component={Login} />
             <Route path="/register" exact component={Register} />
             <Redirect from="/" to="/review" />
@@ -69,11 +72,12 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
             <AppNavbar />
             <Component {...props}/>
           </Container>
-          
-          <FooterPlayer />
         </div>
       </div>
-      : <Redirect to='/login' />
+      : <Redirect to={{
+        pathname: '/login',
+        state: { from: props.location }
+      }}/>
   )} />
 );
 

@@ -388,28 +388,28 @@ export class YourMusic extends Component {
                             Add Song...
                         </div>
                         { this.state.songsList.map((item) =>
-                            <div className="yourMusicEntry ">
+                            <div className="yourMusicEntry">
                                 <Link to={`your_music/song?id=${item._id}`}>
-                                <Row>
-                                <img src={item.artwork ? `/songdata/${item.artwork}` : "userpic.png"} alt="avatar" className="artwork-yourMusic" />
-                                    
-                                        <Col className="yourMusicEntryCol ml-4 text-white" xs="4">
-                                            {item.name}
-                                        </Col>
+                                    <Row>
+                                    <img src={item.artwork ? `/songdata/${item.artwork}` : "userpic.png"} alt="avatar" className="artwork-yourMusic" />
+                                        
+                                            <Col className="yourMusicEntryCol ml-4 text-white" xs="4">
+                                                {item.name}
+                                            </Col>
 
-                                        <Col className="yourMusicEntryCol text-gray" xs="3">
-                                            {item.artistName}
-                                        </Col>
+                                            <Col className="yourMusicEntryCol text-gray" xs="3">
+                                                {item.artistName}
+                                            </Col>
 
-                                        <Col className="yourMusicEntryCol text-gray" xs="2">
-                                            {item.genre ? item.genre.text : 'undefined genre' }
-                                        </Col>
+                                            <Col className="yourMusicEntryCol text-gray" xs="2">
+                                                {item.genre ? item.genre.text : 'undefined genre' }
+                                            </Col>
 
-                                        <div className="yourMusicEntryCol ml-auto mr-5 text-red">
-                                            {item ? item.reviewPoints : '-'}
-                                            <FontAwesomeIcon icon="headphones" className="ml-2"/>
-                                        </div>
-                                </Row>
+                                            <div className="yourMusicEntryCol ml-auto mr-5 text-red">
+                                                {item ? item.reviewPoints : '-'}
+                                                <FontAwesomeIcon icon="headphones" className="ml-2"/>
+                                            </div>
+                                    </Row>
                                 </Link>
                             </div>
                         )}

@@ -11,7 +11,14 @@ const Song = require('../../models/Song');
 // @desc    Get Review By ID
 // @access  Private
 router.get('/id/:id', auth, (req, res) => {
-    Review.findById(req.params.id)
+    console.log('got ya ');
+    Review.findById(req.params.id).populate({
+        path: 'song',
+        populate: {
+            path: 'user',
+            model: 'user'
+        }
+    })
         .then(review => res.json(review))
 });
 
@@ -51,6 +58,8 @@ router.get('/history/', auth, (req, res) => {
     Review.find({ user: req.user.id }).sort('-date').populate('song')
         .then(reviews => res.json(reviews));
 })
+
+
 
 // @route   GET api/reviews/favorite
 // @desc    Get Review Favorite List For User

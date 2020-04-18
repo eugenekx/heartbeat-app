@@ -3,6 +3,16 @@ import axios from 'axios';
 import { Table, Container } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Row, Col } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+function trimText(text) {
+    if (text.length > 17) {
+        return text.substring(0, 17) + "...";
+    } else {
+        return text;
+    }
+}
 
 export class History extends Component {
     state = {
@@ -37,24 +47,35 @@ export class History extends Component {
 
     render() {
         return (
-            <Container className="review-container classname mb-5">
-                <h1 className="text-white"><strong>Your Reviews</strong></h1>
-                <Table className="text-white mt-5">
-                        <tbody>
-                            { this.state.reviews.map((item) =>
-                                <tr key={item._id}>
-                                
-                                    <td><Link to={`history/review?id=${item._id}`} className="sidebarItem">{item.song.name}</Link></td>
+            <Container className="review-container">
+                <h1 className="text-white font-display animate-fadein"><strong>History</strong></h1>
+                    <div className="mt-5">
+                        { this.state.reviews.map((item) =>
+                            <div className="yourMusicEntry ">
+                                <Link to={`history/review?id=${item._id}`}>
+                                <Row>
+                                <img src={item.song.artwork ? `/songdata/${item.song.artwork}` : "userpic.png"} alt="avatar" className="artwork-yourMusic" />
                                     
-                                    <td><div className="sidebarItem">{item.song.artistName}</div></td>
-                                    <td><div className="sidebarItem">{item.song.genre ? item.song.genre.text : null }</div></td>
-                                    <td><div className="sidebarItem">{item.rating ? <div className="text-success">like</div> : <div className="text-danger">dislike</div>}</div></td>
-                                    <td><div className="sidebarItem">{item.text ? item.text : null}</div></td>
-                                </tr>
-                                
-                            )}
-                        </tbody>
-                </Table>
+                                        <Col className="yourMusicEntryCol ml-4 text-white" xs="4">
+                                            {item.song.name}
+                                        </Col>
+
+                                        <Col className="yourMusicEntryCol text-gray" xs="3">
+                                            {item.song.artistName}
+                                        </Col>
+
+                                        <Col className="yourMusicEntryCol text-white" xs="2">
+                                            {item.text ? trimText(item.text) : <div className="text-gray"><i>(without text)</i></div>}
+                                        </Col>
+
+                                        <div className="yourMusicEntryCol ml-auto mr-5 text-red">
+                                            {item.rating ? <FontAwesomeIcon icon="thumbs-up" className="your-rating-h" /> : <FontAwesomeIcon icon="thumbs-down" className="your-rating-h" />}
+                                        </div>
+                                </Row>
+                                </Link>
+                            </div>
+                        )}
+                    </div>
             </Container>
         )
     }

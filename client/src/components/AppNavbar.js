@@ -5,11 +5,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { logoutUser } from '../actions/authActions';
 import { withRouter } from 'react-router-dom';
+import queryString from 'query-string';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 class AppNavbar extends Component {
     state = {
         modal: false,
         selectedAvatarFile: null,
+        breadcrumbs: [],
+        link: ''
     }
 
     toggle = () => { this.setState({ modal: !this.state.modal }); }
@@ -36,16 +41,104 @@ class AppNavbar extends Component {
         this.avatarInput.click();
     }
 
+    updateBreadcrumbs = () => {
+        const { breadcrumbs } = this.state; 
+        switch (this.props.location.pathname) {
+            case '/review':
+                if (this.props.location.search) {
+                    const genre = queryString.parse(this.props.location.search).genre;
+                    axios
+                        .get(`/api/genres/${genre}`, this.getToken())
+                        .then(res => { this.setState({ 
+                            breadcrumbs: ['REVIEW', res.data.text.toUpperCase()],
+                            link: '/review'
+                        }); 
+                    });
+                } else {
+                    this.setState({
+                        breadcrumbs: ['','']
+                    });
+                }
+                break;
+            case '/your_music/song':
+                if (this.props.location.search) {
+                    const id = queryString.parse(this.props.location.search).id;
+                    axios
+                        .get(`/api/songs/id/${id}`, this.getToken())
+                        .then(res => { this.setState({ 
+                            breadcrumbs: ['YOUR MUSIC', res.data.name.toUpperCase()],
+                            link: '/your_music' 
+                        }); 
+                    });
+                } else {
+                    this.setState({
+                        breadcrumbs: ['', '']
+                    });
+                }
+                break;
+            case '/history/review':
+                
+                if (this.props.location.search) {
+                    console.log('hey');
+                    const id = queryString.parse(this.props.location.search).id;
+                    axios
+                        .get(`/api/reviews/id/${id}`, this.getToken())
+                        .then(res => { this.setState({ 
+                            breadcrumbs: ['HISTORY', res.data.song.name.toUpperCase()],
+                            link: '/history'
+                        }); 
+                    });
+                } else {
+                    this.setState({
+                        breadcrumbs: ['', '']
+                    });
+                }
+                break;
+            default:
+                this.setState({
+                    breadcrumbs: ['','']
+                });
+                break;
+        }
+        console.log(breadcrumbs);
+    }
+
+
+    getToken = () => {
+        // Get token from local storage
+        const token = this.props.auth.token;
+
+        // Headers
+        const config = {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+
+        // If token, add to headers
+        if(token) {
+            config.headers['x-auth-token'] = token;
+        }
+
+        return config;
+    }
+
+    componentDidMount() {
+        this.updateBreadcrumbs();
+    }
+    
+    componentDidUpdate(prevProps) {
+        if (prevProps.location.key != this.props.location.key) {
+            this.updateBreadcrumbs();
+        }
+    }
+
     render() {
         const { isAuthenticated, user } = this.props.auth;
         const profileModal = (
             <Fragment>
                 <Modal isOpen={this.state.modal} toggle={this.toggle}> 
-                        <ModalHeader>
-                            Profile
-                        </ModalHeader>  
-
-                        <ModalBody>
+                        <ModalBody className="mt-5">
                             <div className="select-avatar-wrapper">
                                 <img src={user.avatar ? `/songdata/${user.avatar}` : "userpic.png"} alt="avatar" className="profile-avatar" />
                                 <div className="select-avatar-button" onClick={this.onAvatarClick}>
@@ -59,14 +152,14 @@ class AppNavbar extends Component {
                                     <Label for="name">
                                         Name
                                     </Label>
-                                    <Input id="name" type="text" value={user ? user.name : null}/>
+                                    <Input id="name" type="text" className="text-field" value={user ? user.name : null}/>
                                 </FormGroup>
 
                                 <FormGroup>
                                     <Label for="email">
                                         E-Mail
                                     </Label>
-                                    <Input id="email" type="email"  value={user ? user.email : null} />
+                                    <Input id="email" type="email" className="text-field" value={user ? user.email : null} />
                                 </FormGroup>
 
                                 <FormGroup>
@@ -76,6 +169,7 @@ class AppNavbar extends Component {
                                     <Input 
                                         id="bandcamp" 
                                         name="bandcamp" 
+                                        className="text-field"
                                         type="url" 
                                         placeholder="Bandcamp Link (optional)"
                                         value={user ? user.bandcampLink : null}
@@ -90,6 +184,7 @@ class AppNavbar extends Component {
                                     <Input 
                                         id="spotify" 
                                         name="spotify" 
+                                        className="text-field"
                                         type="url" 
                                         placeholder="Spotify Link (optional)"
                                         value={user ? user.spotifyLink : null}
@@ -103,7 +198,8 @@ class AppNavbar extends Component {
                                     </Label>
                                     <Input 
                                         id="facebook" 
-                                        name="facebook" 
+                                        name="facebook"
+                                        className="text-field" 
                                         type="url" 
                                         placeholder="Facebook Link (optional)"
                                         value={user ? user.facebookLink : null}
@@ -118,6 +214,7 @@ class AppNavbar extends Component {
                                     <Input 
                                         id="twitter" 
                                         name="twitter" 
+                                        className="text-field mb-0"
                                         type="url" 
                                         placeholder="Twitter Link (optional)"
                                         value={user ? user.twitterLink : null}
@@ -127,31 +224,36 @@ class AppNavbar extends Component {
                             </Form>     
                         </ModalBody>  
 
-                        <button onClick={this.logout}>Log Out</button>
+                        
                         
                         <ModalFooter>
-                        <button className="btn btn-primary" onClick={this.onSubmitTrack}>Submit</button>       
-                        <button className="btn btn-secondary" onClick={this.toggle}>Close</button>
+                        <div className="logout-label clickable mr-auto" onClick={this.logout}>
+                            <FontAwesomeIcon icon='sign-out-alt' className="mr-2" />
+                            Log Out
+                        </div>
+                        <button className="btn btn-danger" onClick={this.onSubmitTrack}>UPDATE</button>       
+                        <button className="btn btn-secondary" onClick={this.toggle}>CLOSE</button>
                         </ModalFooter>      
                     </Modal>
             </Fragment>
         ) 
+        
         const userPanel = (
             <Fragment>
                 <button onClick={this.toggle} className="ml-4 d-none d-md-inline">
-                        <img src={user.name ? `/songdata/${user.avatar}` : "userpic.png"} alt="avatar" className="avatar" />
+                        <img src={user.avatar ? `/songdata/${user.avatar}` : "userpic.png"} alt="avatar" className="avatar" />
                         <div className="username d-inline-block ml-2">
                             { user ? user.name : null }
                         </div>
-                </button> 
+                </button>
             </Fragment>
         )
 
         return(
             <Navbar className="mb-5" id="appNavbar">
                 <Breadcrumb listClassName="myBreadcrumb" className="d-none d-md-block">
-                    <BreadcrumbItem className="myBreadcrumbItem"><a href="#">REVIEW</a></BreadcrumbItem>
-                    <BreadcrumbItem className="myBreadcrumbItem" active>ELECTRONICA / DOWNTEMPO</BreadcrumbItem>
+                    {this.state.breadcrumbs[0] ? <BreadcrumbItem className="myBreadcrumbItem"><Link to={this.state.link}>{this.state.breadcrumbs[0]}</Link></BreadcrumbItem> : null}
+                    {this.state.breadcrumbs[1] ? <BreadcrumbItem className="myBreadcrumbItem" active>{this.state.breadcrumbs[1]}</BreadcrumbItem> : null}
                 </Breadcrumb>
 
                 <div className="ml-auto">

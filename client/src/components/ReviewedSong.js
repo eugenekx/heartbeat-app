@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { Container } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import EditableLabel from 'editable-label-react';
 import Progressor from '../lib/Progressor';
 import queryString from 'query-string';
 import axios from 'axios';
 import { loadUser } from '../actions/authActions';
 import { Row, Col } from 'reactstrap';
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 function getTime(time) {
     if (!isNaN(time)) {
@@ -22,16 +22,12 @@ function getDate(date) {
     return parsed.toLocaleDateString("en-US"); 
 }
 
-export class SongInfo extends Component {
+export class ReviewedSong extends Component {
     state = {
         song: null,
-        reviews: [],
+        review: null,
         currentTime: 0,
-        duration: 0,
-        artistName: '',
-        name: '',
-        points: '0',
-        namesLoaded: false
+        duration: 0
     }
 
     audio = new Audio();
@@ -158,9 +154,6 @@ export class SongInfo extends Component {
         if (parsed !== this.state.song.reviewPoints) {
             if (!isNaN(parsed)) {
                 if (parsed >= 0) {
-                    console.log(parsed);
-
-                    console.log('ready to transfer' + parsed);
                     axios.post(`/api/songs/addpoints/${songId}`, body, this.getToken())
                         .then((res) => {
                             axios.get(`/api/songs/id/${songId}`, this.getToken())
@@ -168,8 +161,6 @@ export class SongInfo extends Component {
                                     song: res.data,
                                     points: res.data.reviewPoints.toString() 
                                 }))
-                            
-                            console.log('now loading user');
                             this.props.loadUser();
 
                         })
@@ -185,12 +176,16 @@ export class SongInfo extends Component {
     }
 
     componentDidMount() {
-        const songId = queryString.parse(this.props.location.search).id;
-        
+        const reviewId = queryString.parse(this.props.location.search).id;
+        console.log('mounted with' + reviewId);
         axios
-            .get(`/api/songs/id/${songId}`, this.getToken())
+            .get(`/api/reviews/id/${reviewId}`, this.getToken())
             .then(res =>
-                this.setState({song: res.data}, () => {
+                this.setState({
+                    review: res.data, 
+                    song: res.data.song
+                }, () => {
+                    console.log(this.state.review, this.state.song);
                     this.progressor = new Progressor({
                         media : this.audio,
                         bar   : this.waveform,
@@ -222,11 +217,6 @@ export class SongInfo extends Component {
                     });
 
                 }));
-        
-        axios
-            .get(`/api/reviews/song/${songId}`, this.getToken())
-            .then(res =>
-                this.setState({reviews: res.data}));
     }
 
     getToken = () => {
@@ -249,70 +239,33 @@ export class SongInfo extends Component {
     }
 
     render() {
-        const { song } = this.state;
+        const { song, review } = this.state;
         const duration = getTime(this.state.duration);
         const currentTime = getTime(this.state.currentTime);
-
+        console.log(song, review);
         return (
-            <Container className="review-container ml-0">
-                { song ?
+            <SkeletonTheme color="#555555" highlightColor="#444">
+            <Container className="review-container ml-0 animate-fadein">
+                { song ? 
                     <img src={song.artwork ? `/songdata/${song.artwork}` : "userpic.png"} className="artwork-uploaded"/>
-                    :
-                    null
+                :
+                    <Skeleton width={200} height={200} />
                 }
-                { song ?
+                { song ? 
                 <div className="song-uploaded d-inline-block ml-3 mb-5">
 
                     <div className="player-row ml-3">
+                        { song ? 
                         <button className="footer-player-button" onClick={this.togglePlay}>
                             {!this.audio.paused ? <FontAwesomeIcon icon="pause" size="lg" className="playButton mr-3"/> : <FontAwesomeIcon icon="play" size="lg" className="playButton mr-3"/>}
                         </button>
-
-                        {this.state.namesLoaded ? 
-                            <div className="songinfo-namewrapper">
-                                <EditableLabel 
-                                    labelClassName="player-artist-name cursor-text"
-                                    inputClassName="songinfo-artist-name-input"
-                                    inputMaxLength="50"
-                                    inputWidth="400px"
-                                    inputHeight="25px"
-                                    labelPlaceHolder="Click here to enter artist name"
-                                    value={this.state.artistName}
-                                    onChange={this.onChangeArtistName}
-                                    onFocusOut={this.onFocusOut}
-                                />
-                                <EditableLabel 
-                                    labelClassName="player-track-name cursor-text"
-                                    inputClassName="songinfo-track-name-input"
-                                    labelPlaceHolder="Click here to enter track name"
-                                    inputMaxLength="50"
-                                    inputWidth="400px"
-                                    inputHeight="25px"
-                                    value={this.state.name}
-                                    onChange={this.onChangeName}
-                                    onFocusOut={this.onFocusOut}
-                                />
-                                
-                            </div>
-                        : null }   
-
-                        {this.state.namesLoaded ? 
-                        <div className="ml-auto text-red clickable" onClick={this.addPoints}>
-                            <EditableLabel
-                                labelClassName="points-label"
-                                inputClassName="points-input"
-                                labelPlaceHolder="-"
-                                inputMaxLength="2"
-                                inputWidth="20px"
-                                inputHeight="25px"
-                                value={this.state.points}
-                                onFocusOut={this.addPoints}
-                                onChange={this.onChangePoints}
-                                divClassName="d-inline-block"
-                            />
-                            <div className="d-inline-block points-label"><FontAwesomeIcon icon="headphones" className="ml-2"/></div>
+                        : <Skeleton />}
+                        
+                        <div className="songinfo-namewrapper">
+                            <div className="player-artist-name">{this.state.artistName}</div>
+                            
+                            <div className="player-track-name">{this.state.name}</div>
                         </div>
-                        : null } 
                     </div>
                                                                 
                     <div className="player-row">
@@ -324,27 +277,45 @@ export class SongInfo extends Component {
                     </div>
                 </div>
                 : null }
-                {this.state.reviews ?
-                <div>
-                    { this.state.reviews.map((item) =>
-                        <Row className="ml-0 pl-2 mr-1 borderBottom pb-3">
-                            <div className="text-white artist-info">
-                                <img src={`/songdata/${item.user.avatar}`} alt="avatar" className="artist-avatar" />
-                                <div className="mt-3 artist-name mb-1">{item.user.name}</div>
-                            </div>
-                        
-                            <Col className="px-0 mx-0">
-                                <div className="text-white your-rating animate-fadein">
-                                    <p className="myBreadcrumbItem mb-0">Reviewed on { getDate(item.date) }</p>
-                                    {item.text ? <p className="your-rating-h mt-0">{item.text}</p> : <p className="no-text-provided"><i>(without text)</i></p>}
-                                    {item.rating ? <FontAwesomeIcon icon="thumbs-up" className="your-rating-h" /> : <FontAwesomeIcon icon="thumbs-down" className="your-rating-h" />}
-                                </div>
-                            </Col>        
-                        </Row>
-                    )}
-                </div>
-                : null }
+                
+                <Row>
+                    {song ?
+                    <div className="text-white artist-info-history animate-fadein">
+                        <img src={ song ? `/songdata/${song.user.avatar}` : "userpic.png"} alt="avatar" className="artist-avatar" />
+                        <div className="mt-3 artist-name mb-1">{ song ? song.user.name : '-' }</div>
+                        <div className="links-wrap">
+                            <a href="#" className="artist-links">
+                                <FontAwesomeIcon icon={['fab', 'bandcamp']} className="mr-1" />
+                                Bandcamp
+                            </a><br />
+                            <a href="#" className="artist-links">
+                                <FontAwesomeIcon icon={['fab', 'spotify']} className="mr-1" />
+                                Spotify
+                            </a><br />
+                            <a href="#" className="artist-links">
+                                <FontAwesomeIcon icon={['fab', 'facebook']} className="mr-1" />
+                                Facebook
+                            </a><br />
+                            <a href="#" className="artist-links">
+                                <FontAwesomeIcon icon={['fab', 'twitter']} className="mr-1" />
+                                Twitter
+                            </a><br />
+                        </div>    
+                    </div>
+                    : null }
+                    <Col className="px-0 mx-0">
+                        {review ?
+                        <div className="text-white your-rating animate-fadein">
+                             <p className="myBreadcrumbItem mb-0">Your review on { getDate(review.date) }</p>
+                            {review.text ? <p className="your-rating-h mt-0">{review.text}</p> : <p className="no-text-provided"><i>(without text)</i></p>}
+                            {review.rating ? <FontAwesomeIcon icon="thumbs-up" className="your-rating-h" /> : <FontAwesomeIcon icon="thumbs-down" className="your-rating-h" />}
+                        </div>
+                        : null }
+                    </Col> 
+                </Row>
             </Container>
+            </SkeletonTheme>
+            
         )
     }
 }
@@ -354,4 +325,4 @@ const mapStateToProps = state => ({
 });
 
 
-export default connect(mapStateToProps, { loadUser })(SongInfo);
+export default connect(mapStateToProps, { loadUser })(ReviewedSong);

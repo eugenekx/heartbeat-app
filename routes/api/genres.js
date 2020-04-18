@@ -6,6 +6,14 @@ const auth = require('../../middleware/auth');
 const Genre = require('../../models/Genre');
 
 // @route   GET api/genres
+// @desc    Get Genre By ID
+// @access  Private
+router.get('/:id', auth, (req, res) => {
+    Genre.findOne({ _id: req.params.id })
+        .then(genre => res.json(genre));
+});
+
+// @route   GET api/genres
 // @desc    Get Genres List
 // @access  Private
 router.get('/', auth, (req, res) => {
