@@ -16,7 +16,6 @@ router.post('/', (req, res) => {
     const { 
         name, 
         email, 
-        avatar,
         password,
         bandcampLink,
         spotifyLink,
@@ -28,7 +27,7 @@ router.post('/', (req, res) => {
     if(!name || !email || !password) {
         return res.status(400).json({ msg: 'Please enter all fields' });
     }
-
+    const avatar = '';
     // Check for existing user
     User.findOne({ email })
         .then(user => {
@@ -36,8 +35,8 @@ router.post('/', (req, res) => {
 
             const newUser = new User({
                 name,
-                email,
                 avatar,
+                email,
                 password,
                 bandcampLink,
                 spotifyLink,

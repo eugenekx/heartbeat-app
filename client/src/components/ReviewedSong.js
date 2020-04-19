@@ -244,7 +244,7 @@ export class ReviewedSong extends Component {
         const currentTime = getTime(this.state.currentTime);
         console.log(song, review);
         return (
-            <SkeletonTheme color="#555555" highlightColor="#444">
+            <SkeletonTheme color="#333333" highlightColor="#555555">
             <Container className="review-container ml-0 animate-fadein">
                 { song ? 
                     <img src={song.artwork ? `/songdata/${song.artwork}` : "userpic.png"} className="artwork-uploaded"/>

@@ -8,7 +8,7 @@ const UserSchema = new Schema({
     },
     avatar: {
         type: String,
-        required: true
+        default: ''
     },
     email: {
         type: String,

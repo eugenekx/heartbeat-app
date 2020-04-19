@@ -103,6 +103,15 @@ class AppNavbar extends Component {
         console.log(breadcrumbs);
     }
 
+    onFocus = e => {
+        e.target.classList.add("focus");
+        console.log(e.target);
+    }
+
+    onBlur = e => {
+        if (e.target.value === '')
+            e.target.classList.remove("focus");
+    }
 
     getToken = () => {
         // Get token from local storage
@@ -147,81 +156,38 @@ class AppNavbar extends Component {
                                 <input ref={(input) => { this.avatarInput = input; }} className="select-avatar-upload" type="file" accept="image/*" onChange={this.onChangeAvatar} />
                             </div>
                         
-                            <Form>
-                                <FormGroup>
-                                    <Label for="name">
-                                        Name
-                                    </Label>
-                                    <Input id="name" type="text" className="text-field" value={user ? user.name : null}/>
-                                </FormGroup>
+                            <form action="index.html" class="user-form">
+                                <div className="txtb">
+                                    <input className="focus" type="text" value={user.name || null} autocomplete="off" name="name" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                    <span data-placeholder="Name"></span>
+                                </div>
 
-                                <FormGroup>
-                                    <Label for="email">
-                                        E-Mail
-                                    </Label>
-                                    <Input id="email" type="email" className="text-field" value={user ? user.email : null} />
-                                </FormGroup>
+                                <div class="txtb">
+                                    <input className="focus" type="text" value={user.email || null} autocomplete="off" name="email" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                    <span data-placeholder="E-Mail"></span>
+                                </div>
 
-                                <FormGroup>
-                                    <Label for="bandcamp">
-                                        Bandcamp Link
-                                    </Label>
-                                    <Input 
-                                        id="bandcamp" 
-                                        name="bandcamp" 
-                                        className="text-field"
-                                        type="url" 
-                                        placeholder="Bandcamp Link (optional)"
-                                        value={user ? user.bandcampLink : null}
-                                        onChange={this.onChange}
-                                    />
-                                </FormGroup>
 
-                                <FormGroup>
-                                    <Label for="spotify">
-                                        Spotify Link
-                                    </Label>
-                                    <Input 
-                                        id="spotify" 
-                                        name="spotify" 
-                                        className="text-field"
-                                        type="url" 
-                                        placeholder="Spotify Link (optional)"
-                                        value={user ? user.spotifyLink : null}
-                                        onChange={this.onChange}
-                                    />
-                                </FormGroup>
+                                <div class="txtb">
+                                    <input className={user.bandcampLink ? "focus" : null } type="text" value={user.bandcampLink || null} autocomplete="off" name="bandcamp" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                    <span data-placeholder="Bandcamp (optional)"></span>
+                                </div>
 
-                                <FormGroup>
-                                    <Label for="facebook">
-                                        Facebook Link
-                                    </Label>
-                                    <Input 
-                                        id="facebook" 
-                                        name="facebook"
-                                        className="text-field" 
-                                        type="url" 
-                                        placeholder="Facebook Link (optional)"
-                                        value={user ? user.facebookLink : null}
-                                        onChange={this.onChange}
-                                    />
-                                </FormGroup>
+                                <div class="txtb">
+                                    <input className={user.spotifyLink ? "focus" : null } type="text" value={user.spotifyLink || null} autocomplete="off" name="spotify" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                    <span data-placeholder="Spotify (optional)"></span>
+                                </div>
 
-                                <FormGroup>
-                                    <Label for="twitter">
-                                        Twitter Link
-                                    </Label>
-                                    <Input 
-                                        id="twitter" 
-                                        name="twitter" 
-                                        className="text-field mb-0"
-                                        type="url" 
-                                        placeholder="Twitter Link (optional)"
-                                        value={user ? user.twitterLink : null}
-                                        onChange={this.onChange}
-                                    />
-                                </FormGroup>
-                            </Form>     
+                                <div class="txtb">
+                                    <input className={user.facebookLink ? "focus" : null } type="text" value={user.facebookLink || null} autocomplete="off" name="facebook" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                    <span data-placeholder="Facebook (optional)"></span>
+                                </div>
+
+                                <div class="txtb">
+                                    <input className={user.twitterLink ? "focus" : null } type="text" value={user.twitterLink || null} autocomplete="off" name="twitter" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                    <span data-placeholder="Twitter (optional)"></span>
+                                </div>
+                            </form>  
                         </ModalBody>  
 
                         
