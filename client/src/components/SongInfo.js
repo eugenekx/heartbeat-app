@@ -8,6 +8,7 @@ import queryString from 'query-string';
 import axios from 'axios';
 import { loadUser } from '../actions/authActions';
 import { Row, Col } from 'reactstrap';
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 function getTime(time) {
     if (!isNaN(time)) {
@@ -252,20 +253,22 @@ export class SongInfo extends Component {
         const { song } = this.state;
         const duration = getTime(this.state.duration);
         const currentTime = getTime(this.state.currentTime);
-
         return (
+            <SkeletonTheme color="#2D2B36" highlightColor="#737087">
             <Container className="review-container ml-0">
                 { song ?
                     <img src={song.artwork ? `/songdata/${song.artwork}` : "userpic.png"} className="artwork-uploaded"/>
                     :
-                    null
+                    <Skeleton width={200} height={200} />
                 }
-                { song ?
                 <div className="song-uploaded d-inline-block ml-3 mb-5">
-
                     <div className="player-row ml-3">
                         <button className="footer-player-button" onClick={this.togglePlay}>
-                            {!this.audio.paused ? <FontAwesomeIcon icon="pause" size="lg" className="playButton mr-3"/> : <FontAwesomeIcon icon="play" size="lg" className="playButton mr-3"/>}
+                            { song ?
+                                <div>
+                                    {!this.audio.paused ? <FontAwesomeIcon icon="pause" size="lg" className="playButton mr-3"/> : <FontAwesomeIcon icon="play" size="lg" className="playButton mr-3"/>}
+                                </div>
+                            : <div className="mr-3"><Skeleton width={30} height={30} circle /></div>}
                         </button>
 
                         {this.state.namesLoaded ? 
@@ -294,39 +297,51 @@ export class SongInfo extends Component {
                                 />
                                 
                             </div>
-                        : null }   
-
-                        {this.state.namesLoaded ? 
-                        <div className="ml-auto text-red clickable" onClick={this.addPoints}>
-                            <EditableLabel
-                                labelClassName="points-label"
-                                inputClassName="points-input"
-                                labelPlaceHolder="-"
-                                inputMaxLength="2"
-                                inputWidth="20px"
-                                inputHeight="25px"
-                                value={this.state.points}
-                                onFocusOut={this.addPoints}
-                                onChange={this.onChangePoints}
-                                divClassName="d-inline-block"
-                            />
-                            <div className="d-inline-block points-label"><FontAwesomeIcon icon="headphones" className="ml-2"/></div>
+                        : 
+                        <div>
+                            <Skeleton width={140} height={10} /><br />
+                            <Skeleton height={25} width={240}/>
                         </div>
-                        : null } 
+                        }   
+
+                        
+                        <div className="ml-auto text-red clickable" onClick={this.addPoints}>
+                            {this.state.namesLoaded ? 
+                            <div>
+                                <EditableLabel
+                                    labelClassName="points-label"
+                                    inputClassName="points-input"
+                                    labelPlaceHolder="-"
+                                    inputMaxLength="2"
+                                    inputWidth="20px"
+                                    inputHeight="25px"
+                                    value={this.state.points}
+                                    onFocusOut={this.addPoints}
+                                    onChange={this.onChangePoints}
+                                    divClassName="d-inline-block"
+                                />
+                                <div className="d-inline-block points-label"><FontAwesomeIcon icon="headphones" className="ml-2"/></div>
+                            </div>
+                            : <Skeleton width={30} height={30} /> } 
+                        </div>
+                        
                     </div>
                                                                 
                     <div className="player-row">
-                        <div className="mt-4 review-player-time-left text-white">{ currentTime }</div>
+                        <div className="mt-4 review-player-time-left text-white">{ song ? currentTime : <Skeleton />   }</div>
                             <div id="wave_wrap">
+                                { song ?
                                 <div className="player-row waveform" id="waveform" ref={(a) => { this.waveform = a; }}><div id="waveform_hover"  ref={(a) => { this.waveformHover = a; }}></div></div>
+                                : <Skeleton height={60} width={1245} /> }
                             </div>
-                        <div className="mt-4 review-player-time-right text-white">{ duration }</div>
+                        <div className="mt-4 review-player-time-right text-white">{ song ? duration : <Skeleton />  }</div>
                     </div>
                 </div>
-                : null }
-                {this.state.reviews ?
+                
+                {this.state.reviews.length ?
                 <div>
                     { this.state.reviews.map((item) =>
+                        <div>
                         <Row className="ml-0 pl-2 mr-1 borderBottom pb-3">
                             <div className="text-white artist-info">
                                 <img src={`/songdata/${item.user.avatar}`} alt="avatar" className="artist-avatar" />
@@ -335,16 +350,33 @@ export class SongInfo extends Component {
                         
                             <Col className="px-0 mx-0">
                                 <div className="text-white your-rating animate-fadein">
-                                    <p className="myBreadcrumbItem mb-0">Reviewed on { getDate(item.date) }</p>
-                                    {item.text ? <p className="your-rating-h mt-0">{item.text}</p> : <p className="no-text-provided"><i>(without text)</i></p>}
-                                    {item.rating ? <FontAwesomeIcon icon="thumbs-up" className="your-rating-h" /> : <FontAwesomeIcon icon="thumbs-down" className="your-rating-h" />}
+                                    <p className="myBreadcrumbItem mb-0 animate-fadein">Reviewed on { getDate(item.date) }</p>
+                                    {item.text ? <p className="your-rating-h mt-0 animate-fadein">{item.text}</p> : <p className="no-text-provided"><i>(without text)</i></p>}
+                                    {item.rating ? <FontAwesomeIcon icon="thumbs-up" className="your-rating-h animate-fadein" /> : <FontAwesomeIcon icon="thumbs-down" className="your-rating-h animate-fadein" />}
                                 </div>
                             </Col>        
                         </Row>
+                        </div>
                     )}
                 </div>
-                : null }
+                :
+                        <Row className="ml-0 pl-2 mr-1 pb-3">
+                            <div className="text-white artist-info">
+                                <Skeleton width={80} height={80} circle />
+                                <div className="mt-3 artist-name mb-1"><Skeleton width={150}/></div>
+                            </div>
+                        
+                            <Col className="px-0 mx-0">
+                                <div className="text-white your-rating animate-fadein">
+                                    <p className="myBreadcrumbItem mb-0"><Skeleton height={10} width={200}/></p>
+                                    <Skeleton count={3} />
+                                    <Skeleton height={30} width={30} circle/> 
+                                </div>
+                            </Col>        
+                        </Row>
+                }
             </Container>
+            </SkeletonTheme>
         )
     }
 }

@@ -1268,3 +1268,15 @@ a:focus {
     position:absolute;
     z-index: 0;
   }
+
+  .review-placeholder {
+    height: 520px;
+    border-radius: 10px;
+    color: #5D5D5D;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Montserrat";
+    font-weight: 800;
+  }

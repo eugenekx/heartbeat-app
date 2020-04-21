@@ -6,8 +6,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 
 import { Link } from 'react-router-dom';
-import EditableLabel from 'editable-label-react';
+import EditableLabel from '../lib/EditableLabel';
 import Progressor from '../lib/Progressor';
+
 
 function getTime(time) {
     if (!isNaN(time)) {
@@ -387,6 +388,7 @@ export class YourMusic extends Component {
                             <FontAwesomeIcon icon="plus" className="mr-2" />
                             Add Song...
                         </div>
+                        
                         { this.state.songsList.map((item) =>
                             <div className="yourMusicEntry">
                                 <Link to={`your_music/song?id=${item._id}`}>

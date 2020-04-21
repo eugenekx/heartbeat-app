@@ -244,73 +244,115 @@ export class ReviewedSong extends Component {
         const currentTime = getTime(this.state.currentTime);
         console.log(song, review);
         return (
-            <SkeletonTheme color="#333333" highlightColor="#555555">
+            <SkeletonTheme color="#2D2B36" highlightColor="#737087">
             <Container className="review-container ml-0 animate-fadein">
                 { song ? 
                     <img src={song.artwork ? `/songdata/${song.artwork}` : "userpic.png"} className="artwork-uploaded"/>
                 :
                     <Skeleton width={200} height={200} />
                 }
-                { song ? 
                 <div className="song-uploaded d-inline-block ml-3 mb-5">
 
                     <div className="player-row ml-3">
-                        { song ? 
-                        <button className="footer-player-button" onClick={this.togglePlay}>
-                            {!this.audio.paused ? <FontAwesomeIcon icon="pause" size="lg" className="playButton mr-3"/> : <FontAwesomeIcon icon="play" size="lg" className="playButton mr-3"/>}
-                        </button>
-                        : <Skeleton />}
+                       
+                            <button className="footer-player-button" onClick={this.togglePlay}>
+                            { song ?
+                                <div>
+                                    {!this.audio.paused ? <FontAwesomeIcon icon="pause" size="lg" className="playButton mr-3"/> : <FontAwesomeIcon icon="play" size="lg" className="playButton mr-3"/>}
+                                </div>
+                            : <Skeleton width={30} height={30} circle />}
+                            </button>
+                        
                         
                         <div className="songinfo-namewrapper">
-                            <div className="player-artist-name">{this.state.artistName}</div>
+                            <div className="player-artist-name">{ song ? this.state.artistName : <Skeleton width={140} height={10}/>}</div>
                             
-                            <div className="player-track-name">{this.state.name}</div>
+                            <div className="player-track-name">{ song ? this.state.name : <Skeleton height={25} width={240}/>}</div>
                         </div>
                     </div>
                                                                 
                     <div className="player-row">
-                        <div className="mt-4 review-player-time-left text-white">{ currentTime }</div>
+                        <div className="mt-4 review-player-time-left text-white">{ song ? currentTime : <Skeleton /> }</div>
                             <div id="wave_wrap">
+                                { song ? 
                                 <div className="player-row waveform" id="waveform" ref={(a) => { this.waveform = a; }}><div id="waveform_hover"  ref={(a) => { this.waveformHover = a; }}></div></div>
+                                : <Skeleton height={60} width={1245} /> }
                             </div>
-                        <div className="mt-4 review-player-time-right text-white">{ duration }</div>
+                        <div className="mt-4 review-player-time-right text-white">{ song ? duration : <Skeleton /> }</div>
                     </div>
                 </div>
-                : null }
+
                 
                 <Row>
-                    {song ?
+                    
                     <div className="text-white artist-info-history animate-fadein">
-                        <img src={ song ? `/songdata/${song.user.avatar}` : "userpic.png"} alt="avatar" className="artist-avatar" />
-                        <div className="mt-3 artist-name mb-1">{ song ? song.user.name : '-' }</div>
+                        { song ? 
+                            <img src={ song ? `/songdata/${song.user.avatar}` : "userpic.png"} alt="avatar" className="artist-avatar" />
+                        : <Skeleton width={80} height={80} circle />}
+
+                        <div className="mt-3 artist-name mb-1">{ song ? song.user.name : <Skeleton width={150}/> }</div>
                         <div className="links-wrap">
+                            
                             <a href="#" className="artist-links">
-                                <FontAwesomeIcon icon={['fab', 'bandcamp']} className="mr-1" />
-                                Bandcamp
+                                { song ? 
+                                    <FontAwesomeIcon icon={['fab', 'bandcamp']} className="mr-1" />
+                                : <Skeleton width={10} height={10} circle/> }
+                                { song ? 
+                                'Bandcamp'
+                                : <Skeleton width={100} height={10}/> }
                             </a><br />
+
+                            
                             <a href="#" className="artist-links">
-                                <FontAwesomeIcon icon={['fab', 'spotify']} className="mr-1" />
-                                Spotify
+                                { song ? 
+                                    <FontAwesomeIcon icon={['fab', 'spotify']} className="mr-1" />
+                                : <Skeleton width={10} height={10} circle/> }
+                                { song ? 
+                                'Spotify'
+                                : <Skeleton width={100} height={10}/> }
                             </a><br />
+
+                            
                             <a href="#" className="artist-links">
-                                <FontAwesomeIcon icon={['fab', 'facebook']} className="mr-1" />
-                                Facebook
+                                { song ? 
+                                    <FontAwesomeIcon icon={['fab', 'facebook']} className="mr-1" />
+                                : <Skeleton width={10} height={10} circle/> }
+                                { song ? 
+                                'Facebook'
+                                : <Skeleton width={100} height={10}/> }
                             </a><br />
+
+                            
                             <a href="#" className="artist-links">
-                                <FontAwesomeIcon icon={['fab', 'twitter']} className="mr-1" />
-                                Twitter
+                                { song ? 
+                                    <FontAwesomeIcon icon={['fab', 'twitter']} className="mr-1" />
+                                : <Skeleton width={10} height={10} circle/> }
+                                { song ? 
+                                'Twitter'
+                                : <Skeleton width={100} height={10}/> }
                             </a><br />
                         </div>    
                     </div>
-                    : null }
+
                     <Col className="px-0 mx-0">
-                        {review ?
+                        
                         <div className="text-white your-rating animate-fadein">
-                             <p className="myBreadcrumbItem mb-0">Your review on { getDate(review.date) }</p>
-                            {review.text ? <p className="your-rating-h mt-0">{review.text}</p> : <p className="no-text-provided"><i>(without text)</i></p>}
-                            {review.rating ? <FontAwesomeIcon icon="thumbs-up" className="your-rating-h" /> : <FontAwesomeIcon icon="thumbs-down" className="your-rating-h" />}
-                        </div>
-                        : null }
+                            {review ?
+                                <p className="myBreadcrumbItem mb-0">Your review on { getDate(review.date) }</p>
+                            : <Skeleton height={10} width={200}/> }
+                            {review ?
+                                <div>
+                                    {review.text ? <p className="your-rating-h mt-0">{review.text}</p> : <p className="no-text-provided"><i>(without text)</i></p>}
+                                </div>
+                            : <Skeleton count={3} /> }
+
+                            {review ?
+                                <div>
+                                    {review.rating ? <FontAwesomeIcon icon="thumbs-up" className="your-rating-h" /> : <FontAwesomeIcon icon="thumbs-down" className="your-rating-h" />}
+                                </div>
+                            : <Skeleton height={30} width={30} circle/> }
+                            </div>
+                        
                     </Col> 
                 </Row>
             </Container>
