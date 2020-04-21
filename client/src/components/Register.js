@@ -1,16 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
-
-import {Form, FormGroup, Label, Input, Button, Alert } from 'reactstrap';
 import { register } from '../actions/authActions';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import { clearErrors } from '../actions/errorActions';
-import axios from 'axios';
-
-import { Link, Redirect, withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 class Register extends Component {
     state = {

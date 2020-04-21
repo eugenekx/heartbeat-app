@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import {Form, FormGroup, Label, Input, Button, Alert } from 'reactstrap';
 import { login } from '../actions/authActions';
 import { Link, Redirect, withRouter } from 'react-router-dom';
 import { clearErrors } from '../actions/errorActions';
