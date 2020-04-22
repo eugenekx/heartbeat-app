@@ -3,11 +3,16 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const auth = require('../../middleware/auth');
-const secret = require('../../config/keys').secretJWT;
 
 // Song Model
 const User = require('../../models/User');
 
+var secret;
+if (process.env.NODE_ENV === 'production') {
+    secret = process.env.secretJWT;
+} else {
+    secret = require('../../config/keys').secretJWT;
+}
 // @route   POST api/auth
 // @desc    Auth user
 // @access  Public

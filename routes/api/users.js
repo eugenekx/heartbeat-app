@@ -2,9 +2,14 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
-const secret = require('../../config/keys').secretJWT;
 const auth = require('../../middleware/auth');
+
+var secret;
+if (process.env.NODE_ENV === 'production') {
+    secret = process.env.secretJWT;
+} else {
+    secret = require('../../config/keys').secretJWT;
+}
 
 // Song Model
 const User = require('../../models/User');

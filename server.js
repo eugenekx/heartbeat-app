@@ -72,8 +72,14 @@ var storage = multer.diskStorage({
     });
   })
 
+var db;
 // DB Config
-const db = require('./config/keys').mongoURI;
+if (process.env.NODE_ENV === 'production') {
+  db = process.env.mongoURI;
+} else {
+  db = require('./config/keys').mongoURI;
+}
+
 // Connect to Mongo
 mongoose
     .connect(db, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false })
