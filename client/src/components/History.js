@@ -54,7 +54,7 @@ export class History extends Component {
                             <div className="yourMusicEntry ">
                                 <Link to={`history/review?id=${item._id}`}>
                                 <Row>
-                                <img src={item.song.artwork ? `/songdata/${item.song.artwork}` : "userpic.png"} alt="avatar" className="artwork-yourMusic" />
+                                <img src={item.song.artwork ? `${item.song.artwork}` : "userpic.png"} alt="avatar" className="artwork-yourMusic" />
                                     
                                         <Col className="yourMusicEntryCol ml-4 text-white" xs="4">
                                             {item.song.name}

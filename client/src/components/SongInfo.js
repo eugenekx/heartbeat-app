@@ -200,7 +200,7 @@ export class SongInfo extends Component {
 
                     this.get_png();
 
-                    this.audio.src = '/songdata/' + this.state.song.filename;
+                    this.audio.src = this.state.song.filename;
                 
                     this.audio.addEventListener('loadedmetadata',() => {
                         this.setState({
@@ -257,7 +257,7 @@ export class SongInfo extends Component {
             <SkeletonTheme color="#2D2B36" highlightColor="#737087">
             <Container className="review-container ml-0">
                 { song ?
-                    <img src={song.artwork ? `/songdata/${song.artwork}` : "userpic.png"} className="artwork-uploaded"/>
+                    <img src={song.artwork ? `${song.artwork}` : "userpic.png"} className="artwork-uploaded"/>
                     :
                     <Skeleton width={200} height={200} />
                 }
@@ -338,13 +338,13 @@ export class SongInfo extends Component {
                     </div>
                 </div>
                 
-                {this.state.reviews.length ?
+                {song ?
                 <div>
                     { this.state.reviews.map((item) =>
                         <div>
                         <Row className="ml-0 pl-2 mr-1 borderBottom pb-3">
                             <div className="text-white artist-info">
-                                <img src={`/songdata/${item.user.avatar}`} alt="avatar" className="artist-avatar" />
+                                <img src={`${item.user.avatar}`} alt="avatar" className="artist-avatar" />
                                 <div className="mt-3 artist-name mb-1">{item.user.name}</div>
                             </div>
                         

@@ -13,6 +13,7 @@ const app = express();
 // Bodyparser Middleware
 app.use(express.json());
 
+/*
 const uploadDestination = path.resolve(__dirname, 'client', 'public', 'songdata');
 
 // Multer Storage
@@ -71,6 +72,7 @@ var storage = multer.diskStorage({
         console.log("The file was saved!");
     });
   })
+*/
 
 var db;
 // DB Config
@@ -91,7 +93,7 @@ app.use('/api/songs', require('./routes/api/songs'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/genres', require('./routes/api/genres'));
 app.use('/api/reviews', require('./routes/api/reviews'));
-
+app.use('/api/upload', require('./routes/api/upload'));
 // Serve static assets if in production
 if(process.env.NODE_ENV === 'production') {
     // Set static folder

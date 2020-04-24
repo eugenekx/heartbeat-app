@@ -8,7 +8,7 @@ class ArtistInfo extends Component {
         const { song } = this.props.song;
         return(
             <div className="text-white artist-info">
-                <img src={ song ? `/songdata/${song.user.avatar}` : "userpic.png"} alt="avatar" className="artist-avatar" />
+                <img src={ song ? `${song.user.avatar}` : "userpic.png"} alt="avatar" className="artist-avatar" />
                 <div className="mt-3 artist-name mb-1">{ song ? song.user.name : '-' }</div>
                 <div className="links-wrap">
                     <a href="#" className="artist-links">

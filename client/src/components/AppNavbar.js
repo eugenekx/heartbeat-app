@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, Navbar, Breadcrumb, BreadcrumbItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
-import { logoutUser } from '../actions/authActions';
+import { logoutUser, loadUser } from '../actions/authActions';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import axios from 'axios';
@@ -14,7 +14,9 @@ class AppNavbar extends Component {
         modal: false,
         selectedAvatarFile: null,
         breadcrumbs: [],
-        link: ''
+        link: '',
+        avatarLoading: false,
+        uploadedAvatar: ''
     }
 
     toggle = () => { this.setState({ modal: !this.state.modal }); }
@@ -31,9 +33,30 @@ class AppNavbar extends Component {
 
     onChangeAvatar = (e) => {
         console.log(e.target.files[0]);
-
         this.setState({
             selectedAvatarFile: e.target.files[0]
+        })
+
+        const avatarData = new FormData();
+        avatarData.append('avatar', e.target.files[0]);
+        this.setState({avatarLoading: true});
+        axios.post('/api/upload/avatar', avatarData, { 
+            // receive two    parameter endpoint url ,form data
+        })
+        .then(res => { // then print response status
+            this.setState({
+                uploadedAvatar: res.data,
+                avatarLoading: false
+            });
+
+            const body = JSON.stringify({
+                updatedUser: {
+                    avatar: res.data
+                }
+            })
+
+            axios.post('/api/users/update', body, this.getToken())
+            .then((res) => this.props.loadUser());
         })
     }
 
@@ -149,11 +172,11 @@ class AppNavbar extends Component {
                 <Modal isOpen={this.state.modal} toggle={this.toggle}> 
                         <ModalBody className="mt-5">
                             <div className="select-avatar-wrapper">
-                                <img src={user.avatar ? `/songdata/${user.avatar}` : "userpic.png"} alt="avatar" className="profile-avatar" />
+                                <img src={user.avatar ? `${user.avatar}` : "/userpic.png"} alt="avatar" className="profile-avatar" />
                                 <div className="select-avatar-button" onClick={this.onAvatarClick}>
                                     <FontAwesomeIcon fixedWidth icon="camera" size="lg" className="fa-icon" />
 	                            </div>
-                                <input ref={(input) => { this.avatarInput = input; }} className="select-avatar-upload" type="file" accept="image/*" onChange={this.onChangeAvatar} />
+                                <input ref={(input) => { this.avatarInput = input; }} className="select-avatar-upload" type="file" accept="image/*" onChange={this.onChangeAvatar} value={this.selectedAvatarFile}/>
                             </div>
                         
                             <form action="index.html" class="user-form">
@@ -207,7 +230,7 @@ class AppNavbar extends Component {
         const userPanel = (
             <Fragment>
                 <button onClick={this.toggle} className="ml-4 d-none d-md-inline">
-                        <img src={user.avatar ? `/songdata/${user.avatar}` : "userpic.png"} alt="avatar" className="avatar" />
+                        <img src={user.avatar ? `${user.avatar}` : "/userpic.png"} alt="avatar" className="avatar" />
                         <div className="username d-inline-block ml-2">
                             { user ? user.name : null }
                         </div>
@@ -245,4 +268,4 @@ const mapStateToProps = state => ({
     auth: state.auth
 });
 
-export default withRouter(connect(mapStateToProps, { logoutUser })(AppNavbar));
+export default withRouter(connect(mapStateToProps, { logoutUser, loadUser })(AppNavbar));

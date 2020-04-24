@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import EditableLabel from '../lib/EditableLabel';
 import Progressor from '../lib/Progressor';
-
+import PulseLoader from 'react-spinners/PulseLoader';
 
 function getTime(time) {
     if (!isNaN(time)) {
@@ -33,7 +33,8 @@ export class YourMusic extends Component {
         isSubmitting: true,
         song: null,
         gotpng: false,
-
+        artworkLoading: false,
+        audioLoading: false,
         currentTime: 0,
         duration: 0
     }
@@ -90,11 +91,11 @@ export class YourMusic extends Component {
 
                 this.waveform.style.width  = width  +'px';
                 this.waveform.style.height = height +'px';
-                this.waveform.style.backgroundImage = 'url(' + getGraph("#FFFFFF","#201F26") +')';
+                this.waveform.style.backgroundImage = 'url(' + getGraph("#FFFFFF","#2D2B36") +')';
                     
 
                 this.waveformHover.style.height = height +'px';
-                this.waveformHover.style.backgroundImage = 'url(' + getGraph("#E61B4C","#E61B4C","#201F26") +')';
+                this.waveformHover.style.backgroundImage = 'url(' + getGraph("#E61B4C","#E61B4C","#2D2B36") +')';
         
         
     }
@@ -117,11 +118,15 @@ export class YourMusic extends Component {
     onChangeArtwork = (e) => {
         const artworkData = new FormData();
         artworkData.append('artwork', e.target.files[0]);
-        axios.post('/upload/artwork', artworkData, { 
+        this.setState({artworkLoading: true});
+        axios.post('/api/upload/artwork', artworkData, { 
             // receive two    parameter endpoint url ,form data
         })
         .then(res => { // then print response status
-            this.setState({uploadedArtwork: res.data});
+            this.setState({
+                uploadedArtwork: res.data,
+                artworkLoading: false
+            });
         })
     }
 
@@ -133,12 +138,14 @@ export class YourMusic extends Component {
 
         const audioData = new FormData();
         audioData.append('audio', e.target.files[0]);
-        axios.post('/upload/audio', audioData, { 
+        this.setState({audioLoading: true});
+        axios.post('/api/upload/audio', audioData, { 
             // receive two    parameter endpoint url ,form data
         })
         .then(res => { // then print response status
             this.setState({
                 uploadedAudio: res.data,
+                audioLoading: false,
                 waveform: path.basename(res.data, '.mp3')+'.json',
                 song: {}    
             });
@@ -160,7 +167,7 @@ export class YourMusic extends Component {
                 gotpng: true
             })
 
-            this.audio.src = '/songdata/' + this.state.uploadedAudio;
+            this.audio.src = this.state.uploadedAudio;
             
             this.audio.addEventListener('loadedmetadata',() => {
                 this.setState({
@@ -301,14 +308,21 @@ export class YourMusic extends Component {
                         <ModalBody>
                             
                             { this.state.uploadedArtwork ?
-                            <img src={this.state.uploadedArtwork ? `/songdata/${this.state.uploadedArtwork}` : "userpic.png"} className="artwork-uploaded"/>
+                            <img src={this.state.uploadedArtwork ? `${this.state.uploadedArtwork}` : "userpic.png"} className="artwork-uploaded animate-fadein"/>
                             :
-                            <label for="artwork" className="add-artwork-placeholder  d-inline-block">
-                                <div className="add-artwork-icon">
-                                <FontAwesomeIcon icon="file-image" className="" size="3x"/>
-                                <div className="add-artwork-text">Upload Artwork...</div>
-                                </div>
-                            </label>
+                                <label for="artwork" className="add-artwork-placeholder  d-inline-block">
+                                    {!this.state.artworkLoading ? 
+                                    <div className="add-artwork-icon">
+                                        <FontAwesomeIcon icon="file-image" className="" size="3x"/>
+                                        <div className="add-artwork-text">Upload Artwork...</div>
+                                    </div>
+                                    :
+                                    <div className="add-artwork-icon text-white">
+                                        <FontAwesomeIcon icon="file-image" className="" size="3x"/>
+                                        <div className="add-artwork-text">Loading...</div>
+                                    </div>
+                                    }
+                                </label>
                             }
                             <Input id="artwork" type="file" accept="image/*" name="artwork" onChange={this.onChangeArtwork} className="d-none" />
                             
@@ -355,10 +369,17 @@ export class YourMusic extends Component {
                                 </div>
                             :
                             <label for="audio" className="add-song-placeholder d-inline-block ml-3">
-                                <div className="add-artwork-icon">
-                                    <FontAwesomeIcon icon="file-audio" className="" size="3x"/>
-                                    <div className="add-artwork-text">Upload Audio...</div>
-                                </div>
+                                {!this.state.audioLoading ?
+                                    <div className="add-artwork-icon">
+                                        <FontAwesomeIcon icon="file-audio" className="" size="3x"/>
+                                        <div className="add-artwork-text">Upload Audio...</div>
+                                    </div>
+                                :
+                                    <div className="add-artwork-icon text-white">
+                                        <FontAwesomeIcon icon="file-audio" className="" size="3x"/>
+                                        <div className="add-artwork-text">Loading...</div>
+                                    </div>
+                                }
                             </label>
                             }
                             <Input id="audio" type="file" accept="audio/mp3" name="audio" onChange={this.onChangeAudio} className="d-none" />
@@ -393,7 +414,7 @@ export class YourMusic extends Component {
                             <div className="yourMusicEntry">
                                 <Link to={`your_music/song?id=${item._id}`}>
                                     <Row>
-                                    <img src={item.artwork ? `/songdata/${item.artwork}` : "userpic.png"} alt="avatar" className="artwork-yourMusic" />
+                                    <img src={item.artwork ? `${item.artwork}` : "userpic.png"} alt="avatar" className="artwork-yourMusic" />
                                         
                                             <Col className="yourMusicEntryCol ml-4 text-white" xs="4">
                                                 {item.name}

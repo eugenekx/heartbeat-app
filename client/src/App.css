@@ -729,7 +729,6 @@ a:focus {
 }
 
 .modal {
-    width: 800px;
     max-width: 100%;
   }
 
@@ -1279,4 +1278,13 @@ a:focus {
     align-items: center;
     font-family: "Montserrat";
     font-weight: 800;
+  }
+
+  .add-artwork-placeholder-loading {
+    display: inline-block;
+    transition: all .3s ease;
+    border-radius: 10px;
+    width: 200px;
+    height: 200px;
+    border: 5px dashed #E61B4C;
   }
