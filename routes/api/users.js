@@ -83,7 +83,6 @@ router.get("/:id", auth, (req, res) => {
 // @desc    Update User By ID
 // @access  Private
 router.post("/update/", auth, (req, res) => {
-	console.log("got there");
 	// if user doesn't exist
 	User.exists({ _id: req.user.id }).then((exists) => {
 		if (!exists) {
