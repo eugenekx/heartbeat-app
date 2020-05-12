@@ -1,33 +1,36 @@
 {
-  "name": "heartbeat-app",
-  "version": "1.0.0",
-  "description": "A web service for artists to get their music rated by other artists.",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon --ignore 'client/' server.js",
-    "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
-  },
-  "author": "Eugene Karkhanov",
-  "license": "ISC",
-  "dependencies": {
-    "aws-sdk": "^2.662.0",
-    "bcryptjs": "^2.4.3",
-    "busboy": "^0.3.1",
-    "child-process": "^1.0.2",
-    "concurrently": "^5.1.0",
-    "crypto": "^1.0.1",
-    "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
-    "mime": "^2.4.4",
-    "mongoose": "^5.9.3",
-    "multer": "^1.4.2",
-    "multer-s3": "^2.9.0",
-    "nodemon": "^2.0.2",
-    "pngjs": "^3.4.0",
-    "react-spinners": "^0.8.1"
-  }
+	"name": "heartbeat-app",
+	"version": "1.0.0",
+	"description": "A web service for artists to get their music rated by other artists.",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js",
+		"test": "mocha tests.js --exit",
+		"server": "nodemon --ignore 'client/' server.js",
+		"client": "npm start --prefix client",
+		"dev": "concurrently \"npm run server\" \"npm run client\"",
+		"heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+	},
+	"author": "Eugene Karkhanov",
+	"license": "ISC",
+	"dependencies": {
+		"aws-sdk": "^2.662.0",
+		"bcryptjs": "^2.4.3",
+		"busboy": "^0.3.1",
+		"chai": "^4.2.0",
+		"child-process": "^1.0.2",
+		"concurrently": "^5.1.0",
+		"crypto": "^1.0.1",
+		"express": "^4.17.1",
+		"jsonwebtoken": "^8.5.1",
+		"mime": "^2.4.4",
+		"mocha": "^7.1.2",
+		"mongoose": "^5.9.3",
+		"multer": "^1.4.2",
+		"multer-s3": "^2.9.0",
+		"nodemon": "^2.0.2",
+		"pngjs": "^3.4.0",
+		"react-spinners": "^0.8.1",
+		"supertest": "^4.0.2"
+	}
 }

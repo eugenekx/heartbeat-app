@@ -10,13 +10,16 @@ stages:
     - production
 
 test:
-  stage: test
-  services:
-    - mongo:latest
-  script:
-    - npm i npm@latest -g
-    - npm i
-    - npm test
+    stage: test
+    services:
+        - mongo:latest
+    script:
+        - npm i npm@latest -g
+        - npm i
+        - npm test
+    variables:
+        mongoURI: "mongodb://mongo/heartbeat-app"
+        NODE_ENV: "production"
 
 production:
     type: deploy

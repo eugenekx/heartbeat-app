@@ -1,13 +1,13 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const multer = require('multer');
-const path = require('path');
-const crypto = require('crypto');
-const fs = require('fs');
+const express = require("express");
+const mongoose = require("mongoose");
+const multer = require("multer");
+const path = require("path");
+const crypto = require("crypto");
+const fs = require("fs");
 
-const { getWaveformJSON } = require('./scripts/waveform');
+const { getWaveformJSON } = require("./scripts/waveform");
 
-const mime = require('mime');
+const mime = require("mime");
 const app = express();
 
 // Bodyparser Middleware
@@ -76,36 +76,41 @@ var storage = multer.diskStorage({
 
 var db;
 // DB Config
-if (process.env.NODE_ENV === 'production') {
-  db = process.env.mongoURI;
+if (process.env.NODE_ENV === "production") {
+	db = process.env.mongoURI;
 } else {
-  db = require('./config/keys').mongoURI;
+	db = require("./config/keys").mongoURI;
 }
 
 // Connect to Mongo
 mongoose
-    .connect(db, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false })
-    .then(() => console.log('MongoDB connected...'))
-    .catch(err => console.log(err));
+	.connect(db, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+		useCreateIndex: true,
+		useFindAndModify: false,
+	})
+	//.then(() => console.log("MongoDB connected..."))
+	.catch((err) => console.log(err));
 
-app.use('/api/users', require('./routes/api/users'));
-app.use('/api/songs', require('./routes/api/songs'));
-app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/genres', require('./routes/api/genres'));
-app.use('/api/reviews', require('./routes/api/reviews'));
-app.use('/api/upload', require('./routes/api/upload'));
+app.use("/api/users", require("./routes/api/users"));
+app.use("/api/songs", require("./routes/api/songs"));
+app.use("/api/auth", require("./routes/api/auth"));
+app.use("/api/genres", require("./routes/api/genres"));
+app.use("/api/reviews", require("./routes/api/reviews"));
+app.use("/api/upload", require("./routes/api/upload"));
 // Serve static assets if in production
-if(process.env.NODE_ENV === 'production') {
-    // Set static folder
-    app.use(express.static('client/build'));
+if (process.env.NODE_ENV === "production") {
+	// Set static folder
+	app.use(express.static("client/build"));
 
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-    });
+	app.get("*", (req, res) => {
+		res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+	});
 }
 
 const port = process.env.PORT || 5000;
 
-
-
 app.listen(port, () => console.log(`Server started on port ${port}`));
+
+module.exports = app;
