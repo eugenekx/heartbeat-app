@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
-
-import {Form, FormGroup, Label, Input, Button, Alert } from 'reactstrap';
-import { Redirect } from 'react-router-dom';
 import { register } from '../actions/authActions';
-
 import { clearErrors } from '../actions/errorActions';
+import { Link, withRouter } from 'react-router-dom';
 
 class Register extends Component {
     state = {
         name: '',
         email: '',
         password: '',
+        bandcampLink: '',
+        spotifyLink: '',
+        facebookLink: '',
+        twitterLink: '',
         msg: null
     };
 
@@ -23,6 +23,7 @@ class Register extends Component {
         register: PropTypes.func.isRequired,
         clearErrors: PropTypes.func.isRequired
     };
+
 
     componentDidUpdate(prevProps) {
         const { error, isAuthenticated } = this.props;
@@ -48,13 +49,17 @@ class Register extends Component {
     onSubmit = e => {
         e.preventDefault();
         
-        const { name, email, password } = this.state;
+        const { name, email, password, bandcampLink, spotifyLink, facebookLink, twitterLink } = this.state;
 
         // Create user object
         const newUser = {
             name,
             email,
-            password
+            password,
+            bandcampLink,
+            spotifyLink,
+            facebookLink,
+            twitterLink
         };
         
         // Attempt to register user
@@ -65,57 +70,67 @@ class Register extends Component {
         this.props.history.push("/review");
     }
 
+
+    onFocus = e => {
+        e.target.classList.add("focus");
+        console.log(e.target);
+    }
+
+    onBlur = e => {
+        if (e.target.value === '')
+            e.target.classList.remove("focus");
+    }
+
     render() {
         return(
-            <div className="formContainer">
-                <h1>Register</h1>
-                { this.state.msg ? <Alert color="danger"> { this.state.msg } </Alert> : null }
-                <Form onSubmit={this.onSubmit}>
-                    <FormGroup>
-                        <Label for="name">
-                            Name
-                        </Label>
-                        <Input 
-                            id="name" 
-                            name="name" 
-                            type="text" 
-                            placeholder="Name"
-                            onChange={this.onChange}
-                        />
-                    </FormGroup>
+            <div className="login-bg">
+                
+                <form action="index.html" class="register-form">
+                    <div className="logo-login mb-5"><img className="logo-login-img" src="/logo.png" alt="logo"></img></div>
 
-                    <FormGroup>
-                        <Label for="email">
-                            E-mail
-                        </Label>
-                        <Input 
-                            id="email" 
-                            name="email" 
-                            type="email" 
-                            placeholder="E-mail"
-                            onChange={this.onChange}
-                        />
-                    </FormGroup>
+                    <div class="txtb">
+                        <input type="text" autocomplete="off" name="name" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                        <span data-placeholder="Name"></span>
+                    </div>
 
-                    <FormGroup>
-                        <Label for="password">
-                            Password
-                        </Label>
-                        <Input 
-                            id="password" 
-                            name="password" 
-                            type="password" 
-                            placeholder="Password"
-                            onChange={this.onChange}
-                        />
-                    </FormGroup>
+                    <div class="txtb">
+                        <input type="text" autocomplete="off" name="email" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                        <span data-placeholder="E-Mail"></span>
+                    </div>
 
-                    <Button className="btn-primary" block>Register</Button>
-                    
-                </Form>
+                    <div class="txtb">
+                        <input type="password" name="password" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur}  />
+                        <span data-placeholder="Password"></span>
+                    </div>
 
-            </div>  
-        );
+                    <div class="txtb">
+                        <input type="text" autocomplete="off" name="bandcamp" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                        <span data-placeholder="Bandcamp (optional)"></span>
+                    </div>
+
+                    <div class="txtb">
+                        <input type="text" autocomplete="off" name="spotify" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                        <span data-placeholder="Spotify (optional)"></span>
+                    </div>
+
+                    <div class="txtb">
+                        <input type="text" autocomplete="off" name="facebook" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                        <span data-placeholder="Facebook (optional)"></span>
+                    </div>
+
+                    <div class="txtb">
+                        <input type="text" autocomplete="off" name="twitter" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                        <span data-placeholder="Twitter (optional)"></span>
+                    </div>
+
+                    <button class="logbtn" onClick={this.onSubmit}>Sign up</button>
+
+                    <div class="bottom-text">
+                        Already a member? <Link to="login">Sign in</Link>
+                    </div>
+                </form>
+            </div>
+        )
     }
 }
 
@@ -127,4 +142,4 @@ const mapStateToProps = state => ({
 export default connect(
     mapStateToProps,
     { register, clearErrors }
-)(Register);
+)(withRouter(Register));

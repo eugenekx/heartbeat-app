@@ -2,16 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import {Form, FormGroup, Label, Input, Button, Alert } from 'reactstrap';
 import { login } from '../actions/authActions';
-
+import { Link, Redirect, withRouter } from 'react-router-dom';
 import { clearErrors } from '../actions/errorActions';
 
 class Login extends Component {
     state = {
         email: '',
         password: '',
-        msg: null
+        msg: null,
+        redirectToReferrer: false,
+        loading: false
     };
 
     static propTypes = {
@@ -34,7 +35,9 @@ class Login extends Component {
 
         // if authenticated, redirect
         if (isAuthenticated) {
-            this.props.history.push("/review");
+            this.setState(() => ({
+                redirectToReferrer: true
+              }))
         }
     }
     
@@ -52,6 +55,7 @@ class Login extends Component {
             password
         }
 
+        this.setState({loading: true});
         // Attempt to login user
         this.props.login(user);
     };
@@ -60,43 +64,47 @@ class Login extends Component {
         this.props.history.push("/review");
     }
 
+    onFocus = e => {
+        e.target.classList.add("focus");
+        console.log(e.target);
+    }
+
+    onBlur = e => {
+        if (e.target.value === '')
+            e.target.classList.remove("focus");
+    }
+
     render() {
+        const { from } = this.props.location.state || { from: { pathname: '/review' } }
+        const { redirectToReferrer } = this.state
+        if (redirectToReferrer === true) {
+            return <Redirect to={from} />  
+        }
         return(
-            <div className="formContainer">
-                <h1>Log in</h1>
-                { this.state.msg ? <Alert color="danger"> { this.state.msg } </Alert> : null }
-                <Form onSubmit={this.onSubmit}>
-                    <FormGroup>
-                        <Label for="email">
-                            E-mail
-                        </Label>
-                        <Input 
-                            id="email" 
-                            name="email" 
-                            type="email" 
-                            placeholder="E-mail"
-                            onChange={this.onChange}
-                        />
-                    </FormGroup>
+            <div className="login-bg">
+                <form action="index.html" class="login-form">
+                    <div className="logo-login mb-5"><img className="logo-login-img" src="/logo.png" alt="logo"></img></div>
+                    <h1 className="d-none">Sign In</h1>
 
-                    <FormGroup>
-                        <Label for="password">
-                            Password
-                        </Label>
-                        <Input 
-                            id="password" 
-                            name="password" 
-                            type="password" 
-                            placeholder="Password"
-                            onChange={this.onChange}
-                        />
-                    </FormGroup>
+                    <div class="txtb">
+                        <input type="text" autocomplete="off" name="email" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                        <span data-placeholder="E-Mail"></span>
+                    </div>
 
-                    <Button className="btn-primary" block>Log in</Button>
-                    
-                </Form>
-            </div>  
-        );
+                    <div class="txtb">
+                        <input type="password" name="password" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur}  />
+                        <span data-placeholder="Password"></span>
+                    </div>
+
+                    <button class="logbtn" onClick={this.onSubmit}>{this.state.loading ? 'Loading...' : 'Sign in'}</button>
+
+                    <div class="bottom-text">
+                        Don't have account? <Link to="register">Sign up</Link>
+                    </div>
+
+                </form>
+            </div>
+        )
     }
 }
 
@@ -108,4 +116,4 @@ const mapStateToProps = state => ({
 export default connect(
     mapStateToProps,
     { login, clearErrors }
-)(Login);
+)(withRouter(Login));

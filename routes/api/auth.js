@@ -3,11 +3,16 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const auth = require('../../middleware/auth');
-const secret = require('../../config/keys').secretJWT;
 
 // Song Model
 const User = require('../../models/User');
 
+var secret;
+if (process.env.NODE_ENV === 'production') {
+    secret = process.env.secretJWT;
+} else {
+    secret = require('../../config/keys').secretJWT;
+}
 // @route   POST api/auth
 // @desc    Auth user
 // @access  Public
@@ -37,11 +42,7 @@ router.post('/', (req, res) => {
                         if(err) throw err;
                         res.json({
                             token,
-                            user: {
-                                id: user.id,
-                                name: user.name,
-                                email: user.email
-                            }
+                            user
                         });
                     }
                 )
@@ -55,7 +56,10 @@ router.post('/', (req, res) => {
 router.get('/user', auth, (req, res) => {
     User.findById(req.user.id)
         .select('-password')
-        .then(user => res.json(user));
+        .then(user => {
+            //console.log(user);
+            res.json(user);
+        });
 });
 
 module.exports = router;

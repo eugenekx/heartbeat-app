@@ -1,27 +1,77 @@
 import React, { Component } from 'react';
-
-
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { getReviewSong } from '../actions/songActions';
 
 class GenresList extends Component {
+    state = {
+        genresList: [],
+    }
+
+    componentDidMount() {
+
+        // get genres list
+        axios
+        .get(`/api/genres`, this.getToken())
+        .then(res =>
+            this.setState( { genresList: res.data } ))
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.selectedGenre !== prevProps.selectedGenre) {
+            if (prevProps.selectedGenre) {
+                document.getElementById(prevProps.selectedGenre).setAttribute("class", "genresLink");
+            }
+            if (this.props.selectedGenre) {
+                document.getElementById(this.props.selectedGenre).setAttribute("class", "genresLink sidebarActive");
+            }
+
+            if (!this.props.selectedGenre && prevProps.selectedGenre) {
+                document.getElementById(prevProps.selectedGenre).setAttribute("class", "indexGenresLink");
+            }
+        }
+        
+    }
+    getToken = () => {
+        // Get token from local storage
+        const token = this.props.auth.token;
+
+        // Headers
+        const config = {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+
+        // If token, add to headers
+        if(token) {
+            config.headers['x-auth-token'] = token;
+        }
+
+        return config;
+    }
+
+    onClick = (e) => {
+        if (e.target.id !== this.props.selectedGenre) {
+            this.props.getReviewSong(e.target.id);
+        }
+    }
+
     render() {
         return(
             <div className="genresList">
-                <p><a href="#" className="genresLink">AMBIENT / NEW AGE</a></p>
-                <p><a href="#" className="genresLink">ALTERNATIVE ROCK / PUNK</a></p>
-                <p><a href="#" className="genresLink">HIP-HOP / R'N'B</a></p>
-                <p><a href="#" className="genresLink sidebarActive">ELECTRONICA / DOWNTEMPO</a></p>
-                <p><a href="#" className="genresLink">NEW CLUB</a></p>
-                <p><a href="#" className="genresLink">UK DANCE / GRIME</a></p>
-                <p><a href="#" className="genresLink">POST PUNK / NEW WAVE</a></p>
-                <p><a href="#" className="genresLink">POP</a></p>
-                <p><a href="#" className="genresLink">ROCK</a></p>
-                <p><a href="#" className="genresLink">METAL</a></p>
-                <p><a href="#" className="genresLink">JAZZ</a></p>
-                <p><a href="#" className="genresLink">CLASSICAL / OPERA</a></p>
-                <p><a href="#" className="genresLink">OTHER</a></p>
+                { this.state.genresList.map((item) => 
+                    <p><Link to={`/review?genre=${item._id}`} id={item._id} onClick={this.onClick} key={item._id} className={ this.props.index ? "indexGenresLink" : "genresLink"}>{item.text.toUpperCase()}</Link></p>
+                )}
             </div>
         );
     }
 }
 
-export default GenresList;
+
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+export default connect(mapStateToProps, { getReviewSong })(GenresList);

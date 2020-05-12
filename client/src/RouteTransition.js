@@ -1,0 +1,38 @@
+import React from 'react'
+import { AnimatePresence } from 'framer-motion'
+import { Route, Switch, useLocation } from 'react-router-dom'
+import { MountTransition } from './MountTransition'
+
+export function RouteTransition({
+  children,
+  exact = false,
+  path,
+  slide = 0,
+  slideUp = 0,
+  ...rest
+}) {
+    return (
+        <Route exact={exact} path={path} {...rest}>
+            <MountTransition slide={slide} slideUp={slideUp}>
+              {children}
+            </MountTransition>
+        </Route> 
+    )
+}
+
+
+
+export function AnimatedRoutes({
+  children,
+  exitBeforeEnter = true,
+  initial = false,
+}) {
+  const location = useLocation()
+  return (
+    <AnimatePresence exitBeforeEnter={exitBeforeEnter} initial={initial}>
+      <Switch location={location} key={location.pathname}>
+        {children}
+      </Switch>
+    </AnimatePresence>
+  )
+}

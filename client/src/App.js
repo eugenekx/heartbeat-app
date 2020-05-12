@@ -8,40 +8,64 @@ import Menu from './components/Menu';
 import AppNavbar from './components/AppNavbar';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause} from '@fortawesome/free-solid-svg-icons'
+import { faPen, faPlus, faHeadphones, faFileImage, faFileAudio, faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause, faCamera} from '@fortawesome/free-solid-svg-icons'
 import { faBandcamp, faSpotify, faFacebook, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 import { Container, Row, Col } from 'reactstrap';
 import FooterPlayer from './components/FooterPlayer';
-import GenresList from './components/GenresList';
-import SongPlayer from './components/SongPlayer';
-import ArtistInfo from './components/ArtistInfo';
-import YourRating from './components/YourRating';
+
+import LandingAnimation from './components/LandingAnimation';
+import Review from './components/Review';
 import Register from './components/Register';
 import Login from './components/Login';
-
+import YourMusic from './components/YourMusic';
+import Favorite from './components/Favorite';
+import History from './components/History';
+import SongInfo from './components/SongInfo';
+import ReviewedSong from './components/ReviewedSong';
+import Landing from './components/Landing';
 import { Provider } from 'react-redux';
 import store from './store';
 import { loadUser } from './actions/authActions';
+import { AnimatedRoutes, RouteTransition } from './RouteTransition'; 
 
-library.add(faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faBandcamp, faSpotify, faFacebook, faTwitter, 
-            faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause);
+library.add(faPen, faPlus, faHeadphones, faFileImage, faFileAudio, faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faBandcamp, faSpotify, faFacebook, faTwitter, 
+            faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause, faCamera);
 
 class App extends Component {
   componentDidMount() {
     store.dispatch(loadUser());
   }
-
+  
   render() {
+    console.log(this.props);
     return (
     <Provider store={store}>
       <Router>
         <div className="App">
+        
           <Switch>
             <PrivateRoute path="/review" component={Review} />
-            <Route path="/login" component={Login} />
-            <Route path="/register" component={Register} />
-            <Redirect from="/" to="/review" />
+            <PrivateRoute path="/your_music" exact component={YourMusic} />
+            <PrivateRoute path="/your_music/song" component={SongInfo} />
+            <PrivateRoute path="/favorite" exact component={Favorite} />
+            <PrivateRoute path="/history" exact component={History} />
+            <PrivateRoute path="/history/review" exact component={ReviewedSong} />
+
+
+            <AnimatedRoutes>
+              <RouteTransition path="/login" exact slideUp={30}>
+                <Login />
+              </RouteTransition>
+
+              <RouteTransition path="/register" exact slideUp={30}>
+                <Register />
+              </RouteTransition>
+              
+              <RouteTransition path="/" exact slideUp={30}>
+                <Landing />
+              </RouteTransition>
+            </AnimatedRoutes>
           </Switch> 
         </div>
       </Router>
@@ -49,43 +73,35 @@ class App extends Component {
   );
 }
 }
-const Review = () => (
-  <div className="wrapper">
-  <Menu />
 
-  <Container id="main">
-    <AppNavbar />
-    <Container className="ml-3">
-      <Row>
-        <Col>
-          <SongPlayer />
-          <Row>
-            <Col xs="auto">
-              <ArtistInfo />
-            
-            </Col>
-              <YourRating />    
-          </Row>
-        </Col>
-
-        <Col xs="auto" className="d-none d-lg-inline">
-          <GenresList />
-        </Col>
-      </Row>
-    </Container>
-  </Container>
-  
-  <FooterPlayer />
-</div>
+const LandingRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={(props) => (
+      <div className="landing-bg">
+        <Component {...props}/>
+      </div>
+  )} />
 );
-
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={(props) => (
     store.getState().auth.isAuthenticated === true
-      ? <Component {...props} />
-      : <Redirect to='/login' />
+      ? 
+      <div>
+        <div className="wrapper">
+          <Menu />
+
+          <Container id="main">
+            <AppNavbar />
+            <Component {...props}/>
+          </Container>
+        </div>
+      </div>
+      : <Redirect to={{
+        pathname: '/login',
+        state: { from: props.location }
+      }}/>
   )} />
 );
+
 
 export default App;

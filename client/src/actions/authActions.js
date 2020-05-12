@@ -19,10 +19,13 @@ export const loadUser = () => (dispatch, getState) => {
 
     axios
         .get('/api/auth/user', tokenConfig(getState))
-        .then(res => dispatch({
+        .then(res => { 
+            //console.log(res.data);
+            dispatch({
             type: USER_LOADED,
             payload: res.data
-        }))
+            })
+        })
         .catch(err => {
             dispatch(returnErrors(err.response.data, err.response.status));
             dispatch({
@@ -64,16 +67,16 @@ export const login = ({ email, password }) => dispatch => {
     });
 }; 
 
-export const register = ({ name, email, password }) => dispatch => {
+export const register = (newUser) => dispatch => {
     // Headers
     const config = {
         headers: {
             'Content-Type': 'application/json'
         }
     }
-
+    console.log(newUser);
     // Request Body
-    const body = JSON.stringify({ name, email, password });
+    const body = JSON.stringify(newUser);
 
     axios.post('/api/users', body, config)
     .then(res => dispatch({

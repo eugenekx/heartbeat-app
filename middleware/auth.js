@@ -1,6 +1,13 @@
 const jwt = require('jsonwebtoken');
 
 function auth(req, res, next) {
+    var secret;
+    if (process.env.NODE_ENV === 'production') {
+        secret = process.env.secretJWT;
+    } else {
+        secret = require('../config/keys').secretJWT;
+    }
+
     const token = req.header('x-auth-token');
 
     // Check for token
@@ -10,7 +17,7 @@ function auth(req, res, next) {
 
     try {
         // Verify token
-        const decoded = jwt.verify(token, require('../config/keys').secretJWT);
+        const decoded = jwt.verify(token, secret);
 
         // Add user from payload
         req.user = decoded;
