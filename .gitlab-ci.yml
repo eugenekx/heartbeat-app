@@ -6,7 +6,17 @@ before_script:
     - gem install dpl
 
 stages:
+    - test
     - production
+
+test:
+  stage: test
+  services:
+    - mongo:latest
+  script:
+    - npm i npm@latest -g
+    - npm i
+    - npm test
 
 production:
     type: deploy
