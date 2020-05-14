@@ -32,5 +32,19 @@
 		"pngjs": "^3.4.0",
 		"react-spinners": "^0.8.1",
 		"supertest": "^4.0.2"
+	},
+	"apidoc": {
+		"name": "HeartBeat API",
+		"version": "0.1.0",
+		"description": "Веб-сервис для оценивания музыки.",
+		"title": "HeartBeat API документация",
+		"url": "https://heartbeat-review.herokuapp.com/api/",
+		"order": [
+			"Песня",
+			"Рецензия",
+			"Пользователь",
+			"Жанр",
+			"Загрузка файлов"
+		]
 	}
 }

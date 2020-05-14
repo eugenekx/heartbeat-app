@@ -99,6 +99,9 @@ app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/genres", require("./routes/api/genres"));
 app.use("/api/reviews", require("./routes/api/reviews"));
 app.use("/api/upload", require("./routes/api/upload"));
+
+app.use("/apidoc", express.static("apidoc"));
+
 // Serve static assets if in production
 if (process.env.NODE_ENV === "production") {
 	// Set static folder
