@@ -214,6 +214,12 @@ export class YourMusic extends Component {
             });
         }
 
+        if (newSong.filename) {
+            this.setState({
+                filenamePopoverOpen: false
+            });
+        }
+
         if (!newSong.filename) {
             this.setState({
                 filenamePopoverOpen: true,
@@ -463,6 +469,12 @@ export class YourMusic extends Component {
                                     <div className="add-artwork-icon" id="filename">
                                         <FontAwesomeIcon icon="file-audio" className="" size="3x"/>
                                         <div className="add-artwork-text">Upload Audio...</div>
+
+                                        <Popover placement="bottom" isOpen={ this.state.filenamePopoverOpen } target="filename" toggle={this.onPopoverToggle}>
+                                            <PopoverBody className="text-white">
+                                                Select audio file of your song.
+                                            </PopoverBody>
+                                        </Popover>
                                     </div>
                                 :
                                     <div className="add-artwork-icon text-white">
@@ -481,14 +493,6 @@ export class YourMusic extends Component {
                                         )}
                             </select>
                             
-                            <Popover placement="bottom" isOpen={ this.state.filenamePopoverOpen } target="filename" toggle={this.onPopoverToggle}>
-                                <PopoverBody className="text-white">
-                                    Select audio file of your song.
-                                </PopoverBody>
-                            </Popover>
-
-                            
-
                             <Popover placement="bottom" isOpen={ this.state.genrePopoverOpen } target="genre" toggle={this.onPopoverToggle}>
                                 <PopoverBody className="text-white">
                                     Select your song's genre.
