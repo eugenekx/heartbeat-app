@@ -1,6 +1,5 @@
-import React, { Component, Fragment } from 'react'
-import { Container } from 'reactstrap'
-import { Link } from 'react-router-dom'
+import React, { Component, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 
 
 export class Landing extends Component {    

@@ -353,10 +353,6 @@ a:focus {
 }
 
 
-.review-page {
-    width: 1170px;
-}
-
 .player-artist-name {
     letter-spacing: .5px;
     color: #5D5D5D;
@@ -397,8 +393,9 @@ a:focus {
 
 .waveform {
     animation: fadein 0.5s ease-out;
-    min-width: 725px;
+    min-width: 90px;
     min-height: 90px;
+    width: 100%;
 }
 
 .artist-info {
@@ -450,7 +447,7 @@ a:focus {
     margin-top: 2rem;
     margin-left: 2rem;
     padding-left: 0;
-    padding-right: 2rem;
+    padding-right: 1.25rem;
 }
 
 .your-rating-h {
@@ -664,8 +661,12 @@ a:focus {
 }
 
 
+
+
+
 #wave_wrap { 
      cursor: pointer;
+     width: 100%;
    } 
 
    
@@ -1111,7 +1112,7 @@ a:focus {
 .register-form{
     width: 360px;
     background: #2D2B36;
-    height: 820px;
+    height: 810px;
     padding: 80px 40px;
     border-radius: 10px;
     position: absolute;
@@ -1218,10 +1219,20 @@ a:focus {
     background-position: right;
   }
   
+  .incorrect-login-text {
+    margin-top: 1.2rem;
+    color: #E61B4C; 
+    text-align: center;
+  }
+
   .bottom-text{
     color: white;
     font-family: "Montserrat";
-    margin-top: 60px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-bottom: 20px;
     text-align: center;
     font-size: 12pt;
   }
@@ -1288,3 +1299,20 @@ a:focus {
     height: 200px;
     border: 5px dashed #E61B4C;
   }
+
+  .popover {
+    background-color: #2D2B36 !important;
+    font-family: "Montserrat" !important;
+  }
+
+.bs-popover-auto[x-placement^=right]>.arrow::after, .bs-popover-right>.arrow::after {
+    border-right-color: #2D2B36 !important;
+}
+
+.bs-popover-auto[x-placement^=left]>.arrow::after, .bs-popover-left>.arrow::after {
+    border-left-color: #2D2B36 !important;
+}
+
+.bs-popover-auto[x-placement^=bottom]>.arrow::after, .bs-popover-bottom>.arrow::after {
+    border-bottom-color: #2D2B36 !important;
+}

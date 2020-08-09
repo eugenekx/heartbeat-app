@@ -8,6 +8,7 @@ import { getReviewSong, changeDuration, changeCurrentTime, playerTogglePlay, pla
 import PropTypes from 'prop-types';
 
 import Progressor from '../lib/Progressor';
+import { LTTB } from 'downsample';
 
 function getTime(time) {
     if (!isNaN(time)) {
@@ -23,21 +24,19 @@ class SongPlayer extends Component {
 
 
     get_png() {
-        if (this.props.song.song.msg) {
-            return;
-        }
         //var json = '[50,42,38,33,32,28,14,18,15,38,39,30,40,41,35,35,40,38,30,42,36,37,33,28,30,32,35,33,43,36,36,39,36,29,43,32,39,25,22,21,23,24,19,17,22,21,20,17,29,24,23,30,41,32,33,35,38,39,28,35,37,37,40,36,37,33,33,32,32,30,33,30,37,37,33,35,38,35,35,31,35,35,29,26,31,30,27,30,28,30,30,27,27,37,43,35,39,36,40,35,38,41,45,37,40,34,42,39,41,39,30,37,43,35,39,47,32,33,37,34,36,36,41,40,38,38,34,34,32,35,39,40,36,38,35,37,38,32,33,32,27,30,26,32,34,29,40,36,30,38,32,38,40,34,35,37,32,36,50,39,29,34,35,38,35,40,43,38,35,41,37,36,36,35,31,30,34,23,21,34,32,26,31,35,31,25,27,34,28,32,29,29,30,28,42,36,36,31,35,38,31,31,36,34,29,32,37,28,32,29,28,29,29,31,36,29,28,34,34,29,49,29,38,25,29,26,29,36,41,40,33,38,48,50,29,27,37,38,35,45,27,32,45,31,28,41,39,39,32,36,41,42,32,32,33,37,36,48,28,40,38,27,33,37,38,32,31,35,26,29,35,34,25,32,17,18,29,16,22,14,19,18,15,13,18,59]';
         var json = [];
         json = JSON.parse('[50,42,38,33,32,28,14,18,15,38,39,30,40,41,35,35,40,38,30,42,36,37,33,28,30,32,35,33,43,36,36,39,36,29,43,32,39,25,22,21,23,24,19,17,22,21,20,17,29,24,23,30,41,32,33,35,38,39,28,35,37,37,40,36,37,33,33,32,32,30,33,30,37,37,33,35,38,35,35,31,35,35,29,26,31,30,27,30,28,30,30,27,27,37,43,35,39,36,40,35,38,41,45,37,40,34,42,39,41,39,30,37,43,35,39,47,32,33,37,34,36,36,41,40,38,38,34,34,32,35,39,40,36,38,35,37,38,32,33,32,27,30,26,32,34,29,40,36,30,38,32,38,40,34,35,37,32,36,50,39,29,34,35,38,35,40,43,38,35,41,37,36,36,35,31,30,34,23,21,34,32,26,31,35,31,25,27,34,28,32,29,29,30,28,42,36,36,31,35,38,31,31,36,34,29,32,37,28,32,29,28,29,29,31,36,29,28,34,34,29,49,29,38,25,29,26,29,36,41,40,33,38,48,50,29,27,37,38,35,45,27,32,45,31,28,41,39,39,32,36,41,42,32,32,33,37,36,48,28,40,38,27,33,37,38,32,31,35,26,29,35,34,25,32,17,18,29,16,22,14,19,18,15,13,18,59]');
         var height = 90;
-        var width = 849;
         var h2;
 
         var c    = document.createElement("canvas");
-        c.width  = width;
+        c.width  = this.waveform.clientWidth;
         c.height = height;
         var ctx  = c.getContext("2d");
-
+        var new_width = parseInt(this.waveform.clientWidth / 6,10);
+        var jsonPoints = json.map((item, i) => [i, item]);
+        json = LTTB(jsonPoints, new_width).map((item) => item[1]);
         function getGraph(fillStyle1,fillStyle2,fillStyle3) {
                 
             if (fillStyle3) {
@@ -70,12 +69,11 @@ class SongPlayer extends Component {
                 return c.toDataURL();
             }
 
-            this.waveform.style.width  = width  +'px';
             this.waveform.style.height = height +'px';
             this.waveform.style.backgroundImage = 'url(' + getGraph("#FFFFFF","#201F26") +')';
 
-            this.waveformHover.style.height = height +'px';
-            this.waveformHover.style.backgroundImage = 'url(' + getGraph("#E61B4C","#E61B4C","#201F26") +')';
+            document.getElementById("waveform_hover").style.height = height +'px';
+            document.getElementById("waveform_hover").style.backgroundImage = 'url(' + getGraph("#E61B4C","#000","#201F26") +')';
         
     }
 
@@ -85,7 +83,8 @@ class SongPlayer extends Component {
     }
 
     componentDidMount() {
-        this.audio.addEventListener('timeupdate', this.seekListener)
+        this.audio.addEventListener('timeupdate', this.seekListener);
+        window.addEventListener('resize', this.get_png);
     }
 
     componentDidUpdate() {
@@ -96,16 +95,15 @@ class SongPlayer extends Component {
                 bar   : this.waveform,
                 time  : this.time,
               });
+              this.get_png();
         } 
         
-        if (this.progressor) {
-            this.get_png();
+        if (!this.props.song.song.msg) {
+            if (this.audio.src !== this.props.song.song.filename) {
+                this.audio.src = this.props.song.song.filename;
+            }
         }
         
-
-        if (this.audio.src == '' && this.props.song.song.filename) {
-            this.audio.src = this.props.song.song.filename;
-        }
 
         if (this.audio.duration && !this.props.song.duration) {
             this.props.changeDuration(this.audio.duration);
@@ -126,12 +124,16 @@ class SongPlayer extends Component {
 
     componentWillUnmount() {
         this.audio.removeEventListener('timeupdate', this.seekListener);
+        window.removeEventListener('resize', this.get_png);
     }
 
     togglePlay = (e) => {
-        
         this.props.playerTogglePlay();
 
+    }
+
+    onNextSong = (e) => {
+        this.props.getReviewSong(this.props.song.song.genre);
     }
 
     render() {
@@ -142,10 +144,9 @@ class SongPlayer extends Component {
 
         const gotSongPage = () => {
             return (
-                
                     <Row className="animate-fadein">
                         
-                        <img src={song.artwork ? `${song.artwork}` : "userpic.png"} className="artwork"/>
+                        <img src={song.artwork ? `${song.artwork}` : "userpic.png"} className="artwork" alt="artwork"/>
                         
                         <Col className="pl-0">
                             <div className="player-row ml-3">
@@ -157,7 +158,7 @@ class SongPlayer extends Component {
                                 <div className="player-artist-name">{song.artistName ? song.artistName : '-'} 
                                     <div className="d-block player-track-name">{song.name ? song.name : '-' }</div>
                                 </div>
-                            <div className="ml-auto next-song-label">NEXT SONG  <FontAwesomeIcon icon="forward" fixedWidth className="forwardButton"/> </div>
+                            <button className="ml-auto next-song-label" onClick={this.onNextSong}>NEXT SONG  <FontAwesomeIcon icon="forward" fixedWidth className="forwardButton"/> </button>
                             </div>
                             
                             <div className="player-row">
@@ -194,9 +195,22 @@ class SongPlayer extends Component {
 
         const getPage = () => {
             if (song.msg) {
+                if (this.audio && this.audio.currentTime !== 0) {
+                    this.audio.pause();
+                    if (this.props.song.isPlaying) {
+                        this.props.playerTogglePlay();
+                    }
+                    this.audio.currentTime = 0;
+                }
+                if (this.progressor) {
+                    this.progressor = null;
+                }
                 return noSongsPage();
             } else {
                 if (song._id) {
+                    if (this.audio.src === '' && this.props.song.song.filename) {
+                        this.audio.src = this.props.song.song.filename;
+                    }
                     return gotSongPage();
                 }
                 else {
@@ -218,12 +232,7 @@ SongPlayer.propTypes = {
     changeDuration: PropTypes.func.isRequired,
     changeCurrentTime: PropTypes.func.isRequired,
     playerTogglePlay: PropTypes.func.isRequired,
-    playerToggleSeek: PropTypes.func.isRequired,
-    song: PropTypes.object.isRequired,
-    isPlaying: PropTypes.bool.isRequired,
-    seek: PropTypes.bool.isRequired,
-    duration: PropTypes.number.isRequired,
-    currentTime: PropTypes.number.isRequired
+    playerToggleSeek: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({

@@ -29,13 +29,16 @@ export class Review extends Component {
         return (
             <Container className="review-container">
                 <Row>
-                    {selectedGenre ? this.ReviewPage() : null }
+                        {selectedGenre ? <Col>{this.ReviewPage()}</Col> : null }
                     
-
-                    <div className={`d-none d-lg-inline ${selectedGenre ? "ml-auto": null }`}>
-                        {selectedGenre ? null : <h1 className="text-white font-display animate-fadein mb-5"><strong>Review</strong></h1>}
-                        {selectedGenre ? <GenresList selectedGenre={selectedGenre} /> : <GenresList index /> }
-                    </div>
+                    
+                    <Col xs='auto'>
+                        <div className={`d-none d-lg-inline ${selectedGenre ? "ml-auto": null }`}>
+                            {selectedGenre ? null : <h1 className="text-white font-display animate-fadein mb-5"><strong>Review</strong></h1>}
+                            {selectedGenre ? <GenresList selectedGenre={selectedGenre} /> : <GenresList index /> }
+                        </div>
+                    </Col>
+                    
                 </Row>
             </Container>
         )

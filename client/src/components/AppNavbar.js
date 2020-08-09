@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, Navbar, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import { Modal, ModalBody, ModalFooter, Navbar, Breadcrumb, BreadcrumbItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { logoutUser, loadUser } from '../actions/authActions';
@@ -32,7 +32,6 @@ class AppNavbar extends Component {
     }
 
     onChangeAvatar = (e) => {
-        console.log(e.target.files[0]);
         this.setState({
             selectedAvatarFile: e.target.files[0]
         })
@@ -65,7 +64,6 @@ class AppNavbar extends Component {
     }
 
     updateBreadcrumbs = () => {
-        const { breadcrumbs } = this.state; 
         switch (this.props.location.pathname) {
             case '/review':
                 if (this.props.location.search) {
@@ -102,7 +100,6 @@ class AppNavbar extends Component {
             case '/history/review':
                 
                 if (this.props.location.search) {
-                    console.log('hey');
                     const id = queryString.parse(this.props.location.search).id;
                     axios
                         .get(`/api/reviews/id/${id}`, this.getToken())
@@ -123,12 +120,10 @@ class AppNavbar extends Component {
                 });
                 break;
         }
-        console.log(breadcrumbs);
     }
 
     onFocus = e => {
         e.target.classList.add("focus");
-        console.log(e.target);
     }
 
     onBlur = e => {
@@ -160,7 +155,7 @@ class AppNavbar extends Component {
     }
     
     componentDidUpdate(prevProps) {
-        if (prevProps.location.key != this.props.location.key) {
+        if (prevProps.location.key !== this.props.location.key) {
             this.updateBreadcrumbs();
         }
     }
@@ -179,35 +174,35 @@ class AppNavbar extends Component {
                                 <input ref={(input) => { this.avatarInput = input; }} className="select-avatar-upload" type="file" accept="image/*" onChange={this.onChangeAvatar} value={this.selectedAvatarFile}/>
                             </div>
                         
-                            <form action="index.html" class="user-form">
+                            <form action="index.html" className="user-form">
                                 <div className="txtb">
-                                    <input className="focus" type="text" value={user.name || null} autocomplete="off" name="name" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                    <input className="focus" type="text" value={user.name || '' } autoComplete="off" name="name" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} readOnly />
                                     <span data-placeholder="Name"></span>
                                 </div>
 
-                                <div class="txtb">
-                                    <input className="focus" type="text" value={user.email || null} autocomplete="off" name="email" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                <div className="txtb">
+                                    <input className="focus" type="text" value={user.email || '' } autoComplete="off" name="email" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} readOnly />
                                     <span data-placeholder="E-Mail"></span>
                                 </div>
 
 
-                                <div class="txtb">
-                                    <input className={user.bandcampLink ? "focus" : null } type="text" value={user.bandcampLink || null} autocomplete="off" name="bandcamp" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                <div className="txtb">
+                                    <input className={user.bandcampLink ? "focus" : null } type="text" value={user.bandcampLink || ''} autoComplete="off" name="bandcamp" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} readOnly />
                                     <span data-placeholder="Bandcamp (optional)"></span>
                                 </div>
 
-                                <div class="txtb">
-                                    <input className={user.spotifyLink ? "focus" : null } type="text" value={user.spotifyLink || null} autocomplete="off" name="spotify" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                <div className="txtb">
+                                    <input className={user.spotifyLink ? "focus" : null } type="text" value={user.spotifyLink || ''} autoComplete="off" name="spotify" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} readOnly />
                                     <span data-placeholder="Spotify (optional)"></span>
                                 </div>
 
-                                <div class="txtb">
-                                    <input className={user.facebookLink ? "focus" : null } type="text" value={user.facebookLink || null} autocomplete="off" name="facebook" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                <div className="txtb">
+                                    <input className={user.facebookLink ? "focus" : null } type="text" value={user.facebookLink || ''} autoComplete="off" name="facebook" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} readOnly />
                                     <span data-placeholder="Facebook (optional)"></span>
                                 </div>
 
-                                <div class="txtb">
-                                    <input className={user.twitterLink ? "focus" : null } type="text" value={user.twitterLink || null} autocomplete="off" name="twitter" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} />
+                                <div className="txtb">
+                                    <input className={user.twitterLink ? "focus" : null } type="text" value={user.twitterLink || ''} autoComplete="off" name="twitter" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.onBlur} readOnly />
                                     <span data-placeholder="Twitter (optional)"></span>
                                 </div>
                             </form>  
@@ -220,8 +215,8 @@ class AppNavbar extends Component {
                             <FontAwesomeIcon icon='sign-out-alt' className="mr-2" />
                             Log Out
                         </div>
-                        <button className="btn btn-danger" onClick={this.onSubmitTrack}>UPDATE</button>       
-                        <button className="btn btn-secondary" onClick={this.toggle}>CLOSE</button>
+                        <button className="btn btn-danger" onClick={this.onSubmitTrack}>Update</button>       
+                        <button className="btn btn-secondary" onClick={this.toggle}>Close</button>
                         </ModalFooter>      
                     </Modal>
             </Fragment>
@@ -246,16 +241,11 @@ class AppNavbar extends Component {
                 </Breadcrumb>
 
                 <div className="ml-auto">
-                    <span className="user-points mr-4">
+                    <span className="user-points mr-1">
                         {user.name ? user.points : '-'}
                         <FontAwesomeIcon icon="headphones" className="ml-2"/>
                     </span>
-                    <a href="#" className="notificationLink">
-                        <FontAwesomeIcon icon="bell" size="lg" />
-                    </a>
-
-                    
-                </div>    
+                </div>
                 
                 { isAuthenticated ? userPanel : null}
                 { isAuthenticated ? profileModal : null}

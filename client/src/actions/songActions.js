@@ -14,7 +14,6 @@ import { returnErrors } from './errorActions';
 export const getReviewSong = id => (dispatch, getState) => {
     // User loading
     dispatch({ type: REVIEW_SONG_LOADING });
-
     axios
         .get(`/api/songs/review/${id}`, tokenConfig(getState))
         .then(res =>

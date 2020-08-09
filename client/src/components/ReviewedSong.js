@@ -8,6 +8,7 @@ import axios from 'axios';
 import { loadUser } from '../actions/authActions';
 import { Row, Col } from 'reactstrap';
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { LTTB } from 'downsample';
 
 function getTime(time) {
     if (!isNaN(time)) {
@@ -39,16 +40,16 @@ export class ReviewedSong extends Component {
         var json = '[50,42,38,33,32,28,14,18,15,38,39,30,40,41,35,35,40,38,30,42,36,37,33,28,30,32,35,33,43,36,36,39,36,29,43,32,39,25,22,21,23,24,19,17,22,21,20,17,29,24,23,30,41,32,33,35,38,39,28,35,37,37,40,36,37,33,33,32,32,30,33,30,37,37,33,35,38,35,35,31,35,35,29,26,31,30,27,30,28,30,30,27,27,37,43,35,39,36,40,35,38,41,45,37,40,34,42,39,41,39,30,37,43,35,39,47,32,33,37,34,36,36,41,40,38,38,34,34,32,35,39,40,36,38,35,37,38,32,33,32,27,30,26,32,34,29,40,36,30,38,32,38,40,34,35,37,32,36,50,39,29,34,35,38,35,40,43,38,35,41,37,36,36,35,31,30,34,23,21,34,32,26,31,35,31,25,27,34,28,32,29,29,30,28,42,36,36,31,35,38,31,31,36,34,29,32,37,28,32,29,28,29,29,31,36,29,28,34,34,29,49,29,38,25,29,26,29,36,41,40,33,38,48,50,29,27,37,38,35,45,27,32,45,31,28,41,39,39,32,36,41,42,32,32,33,37,36,48,28,40,38,27,33,37,38,32,31,35,26,29,35,34,25,32,17,18,29,16,22,14,19,18,15,13,18,59]';
                 //json = JSON.parse(data);
                 json= JSON.parse(json);
-                console.log(json);
                 var height = 90;
-                var width = 1245;
                 var h2;
                 
                 var c    = document.createElement("canvas");
-                c.width  = width;
+                c.width  = this.waveform.clientWidth;
                 c.height = height;
                 var ctx  = c.getContext("2d");
-
+                var new_width = parseInt(this.waveform.clientWidth / 6,10);
+                var jsonPoints = json.map((item, i) => [i, item]);
+                json = LTTB(jsonPoints, new_width).map((item) => item[1]);
                 function getGraph(fillStyle1,fillStyle2,fillStyle3) {
                         
                     if (fillStyle3) {
@@ -81,14 +82,12 @@ export class ReviewedSong extends Component {
                     return c.toDataURL();
                 }
 
-                this.waveform.style.width  = width  +'px';
                 this.waveform.style.height = height +'px';
                 this.waveform.style.backgroundImage = 'url(' + getGraph("#FFFFFF","#201F26") +')';
                     
 
-                this.waveformHover.style.height = height +'px';
-                this.waveformHover.style.backgroundImage = 'url(' + getGraph("#E61B4C","#E61B4C","#201F26") +')';
-        
+                document.getElementById("waveform_hover").style.height = height +'px';
+                document.getElementById("waveform_hover").style.backgroundImage = 'url(' + getGraph("#E61B4C","#000","#201F26") +')';
         
     }
 
@@ -134,8 +133,7 @@ export class ReviewedSong extends Component {
     }
 
     updateName = (e) => {
-        console.log(this.state.name);
-        console.log(this.state.artistName);
+
     }
 
     onChangePoints= (e) => {
@@ -177,7 +175,6 @@ export class ReviewedSong extends Component {
 
     componentDidMount() {
         const reviewId = queryString.parse(this.props.location.search).id;
-        console.log('mounted with' + reviewId);
         axios
             .get(`/api/reviews/id/${reviewId}`, this.getToken())
             .then(res =>
@@ -185,7 +182,6 @@ export class ReviewedSong extends Component {
                     review: res.data, 
                     song: res.data.song
                 }, () => {
-                    console.log(this.state.review, this.state.song);
                     this.progressor = new Progressor({
                         media : this.audio,
                         bar   : this.waveform,
@@ -216,8 +212,15 @@ export class ReviewedSong extends Component {
                         points: this.state.song.reviewPoints.toString()
                     });
 
+                    window.addEventListener('resize', this.get_png);
+
                 }));
     }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.get_png);
+    }
+
 
     getToken = () => {
         // Get token from local storage
@@ -242,12 +245,11 @@ export class ReviewedSong extends Component {
         const { song, review } = this.state;
         const duration = getTime(this.state.duration);
         const currentTime = getTime(this.state.currentTime);
-        console.log(song, review);
         return (
             <SkeletonTheme color="#2D2B36" highlightColor="#737087">
             <Container className="review-container ml-0 animate-fadein">
                 { song ? 
-                    <img src={song.artwork ? `${song.artwork}` : "userpic.png"} className="artwork-uploaded"/>
+                    <img src={song.artwork ? `${song.artwork}` : "userpic.png"} className="artwork-uploaded" alt="artwork"/>
                 :
                     <Skeleton width={200} height={200} />
                 }
@@ -291,47 +293,55 @@ export class ReviewedSong extends Component {
                         : <Skeleton width={80} height={80} circle />}
 
                         <div className="mt-3 artist-name mb-1">{ song ? song.user.name : <Skeleton width={150}/> }</div>
-                        <div className="links-wrap">
-                            
-                            <a href="#" className="artist-links">
-                                { song ? 
-                                    <FontAwesomeIcon icon={['fab', 'bandcamp']} className="mr-1" />
-                                : <Skeleton width={10} height={10} circle/> }
-                                { song ? 
-                                'Bandcamp'
-                                : <Skeleton width={100} height={10}/> }
-                            </a><br />
+                            { song ? 
+                                <div className="links-wrap">
+                                    { song.user.bandcampLink ? 
+                                        <div>
+                                            <a href={song.user.bandcampLink + '.bandcamp.com'} className="artist-links">
+                                                <FontAwesomeIcon icon={['fab', 'bandcamp']} className="mr-1" />
+                                                Bandcamp
+                                            </a>
+                                        </div> 
+                                        : 
+                                        null
+                                    }
 
-                            
-                            <a href="#" className="artist-links">
-                                { song ? 
-                                    <FontAwesomeIcon icon={['fab', 'spotify']} className="mr-1" />
-                                : <Skeleton width={10} height={10} circle/> }
-                                { song ? 
-                                'Spotify'
-                                : <Skeleton width={100} height={10}/> }
-                            </a><br />
+                                    { song.user.spotifyLink ? 
+                                        <div>
+                                            <a href="spotify.com" className="artist-links">
+                                                <FontAwesomeIcon icon={['fab', 'spotify']} className="mr-1" />
+                                                Spotify
+                                            </a>
+                                        </div> 
+                                        : 
+                                        null
+                                    }
 
-                            
-                            <a href="#" className="artist-links">
-                                { song ? 
-                                    <FontAwesomeIcon icon={['fab', 'facebook']} className="mr-1" />
-                                : <Skeleton width={10} height={10} circle/> }
-                                { song ? 
-                                'Facebook'
-                                : <Skeleton width={100} height={10}/> }
-                            </a><br />
+                                    { song.user.facebookLink ? 
+                                        <div>
+                                            <a href="facebook.com" className="artist-links">
+                                                <FontAwesomeIcon icon={['fab', 'facebook']} className="mr-1" />
+                                                Facebook
+                                            </a>
+                                        </div> 
+                                        : 
+                                        null
+                                    }
 
-                            
-                            <a href="#" className="artist-links">
-                                { song ? 
-                                    <FontAwesomeIcon icon={['fab', 'twitter']} className="mr-1" />
-                                : <Skeleton width={10} height={10} circle/> }
-                                { song ? 
-                                'Twitter'
-                                : <Skeleton width={100} height={10}/> }
-                            </a><br />
-                        </div>    
+                                    { song.user.twitterLink ? 
+                                        <div>
+                                            <a href="twitter.com" className="artist-links">
+                                                <FontAwesomeIcon icon={['fab', 'twitter']} className="mr-1" />
+                                                Twitter
+                                            </a>
+                                        </div> 
+                                        : 
+                                        null
+                                    }
+                                </div>  
+                                :
+                                null
+                            }                     
                     </div>
 
                     <Col className="px-0 mx-0">

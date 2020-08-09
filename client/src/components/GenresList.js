@@ -62,7 +62,7 @@ class GenresList extends Component {
         return(
             <div className="genresList">
                 { this.state.genresList.map((item) => 
-                    <p><Link to={`/review?genre=${item._id}`} id={item._id} onClick={this.onClick} key={item._id} className={ this.props.index ? "indexGenresLink" : "genresLink"}>{item.text.toUpperCase()}</Link></p>
+                    <p key={item._id}><Link to={`/review?genre=${item._id}`} id={item._id} onClick={this.onClick} className={ this.props.index ? "indexGenresLink" : "genresLink"}>{item.text.toUpperCase()}</Link></p>
                 )}
             </div>
         );

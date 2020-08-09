@@ -8,13 +8,15 @@ import Menu from './components/Menu';
 import AppNavbar from './components/AppNavbar';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPen, faPlus, faHeadphones, faFileImage, faFileAudio, faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause, faCamera} from '@fortawesome/free-solid-svg-icons'
+import { 
+  faPen, faPlus, faHeadphones, faFileImage, faFileAudio, faHome, faUser, 
+  faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, 
+  faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause, faCamera, faExclamationTriangle
+} from '@fortawesome/free-solid-svg-icons'
 import { faBandcamp, faSpotify, faFacebook, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
-import { Container, Row, Col } from 'reactstrap';
-import FooterPlayer from './components/FooterPlayer';
+import { Container } from 'reactstrap';
 
-import LandingAnimation from './components/LandingAnimation';
 import Review from './components/Review';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -30,7 +32,7 @@ import { loadUser } from './actions/authActions';
 import { AnimatedRoutes, RouteTransition } from './RouteTransition'; 
 
 library.add(faPen, faPlus, faHeadphones, faFileImage, faFileAudio, faHome, faUser, faSignOutAlt, faMusic, faStar, faHistory, faHeartbeat, faBell, faPlay, faForward, faBandcamp, faSpotify, faFacebook, faTwitter, 
-            faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause, faCamera);
+            faThumbsUp, faThumbsDown, faBackward, faVolumeUp, faPause, faCamera, faExclamationTriangle);
 
 class App extends Component {
   componentDidMount() {
@@ -38,7 +40,6 @@ class App extends Component {
   }
   
   render() {
-    console.log(this.props);
     return (
     <Provider store={store}>
       <Router>
@@ -73,14 +74,6 @@ class App extends Component {
   );
 }
 }
-
-const LandingRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} render={(props) => (
-      <div className="landing-bg">
-        <Component {...props}/>
-      </div>
-  )} />
-);
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={(props) => (

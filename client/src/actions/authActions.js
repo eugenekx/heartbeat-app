@@ -20,7 +20,6 @@ export const loadUser = () => (dispatch, getState) => {
     axios
         .get('/api/auth/user', tokenConfig(getState))
         .then(res => { 
-            //console.log(res.data);
             dispatch({
             type: USER_LOADED,
             payload: res.data
@@ -36,7 +35,6 @@ export const loadUser = () => (dispatch, getState) => {
 
 // Logout User
 export const logoutUser = () => {
-    console.log("LOGOUT!!");
     return {
         type: LOGOUT_SUCCESS
     };
@@ -74,7 +72,6 @@ export const register = (newUser) => dispatch => {
             'Content-Type': 'application/json'
         }
     }
-    console.log(newUser);
     // Request Body
     const body = JSON.stringify(newUser);
 

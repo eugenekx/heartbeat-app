@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Row, Col, Spinner, Alert, Table, Container, Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import { Row, Col, Container, Modal, ModalHeader, ModalBody, ModalFooter, Input } from 'reactstrap';
 import path from 'path';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,7 +8,9 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import EditableLabel from '../lib/EditableLabel';
 import Progressor from '../lib/Progressor';
-import PulseLoader from 'react-spinners/PulseLoader';
+import { LTTB } from 'downsample';
+
+import { Popover, PopoverBody } from 'reactstrap';
 
 function getTime(time) {
     if (!isNaN(time)) {
@@ -47,16 +49,16 @@ export class YourMusic extends Component {
         var json = '[50,42,38,33,32,28,14,18,15,38,39,30,40,41,35,35,40,38,30,42,36,37,33,28,30,32,35,33,43,36,36,39,36,29,43,32,39,25,22,21,23,24,19,17,22,21,20,17,29,24,23,30,41,32,33,35,38,39,28,35,37,37,40,36,37,33,33,32,32,30,33,30,37,37,33,35,38,35,35,31,35,35,29,26,31,30,27,30,28,30,30,27,27,37,43,35,39,36,40,35,38,41,45,37,40,34,42,39,41,39,30,37,43,35,39,47,32,33,37,34,36,36,41,40,38,38,34,34,32,35,39,40,36,38,35,37,38,32,33,32,27,30,26,32,34,29,40,36,30,38,32,38,40,34,35,37,32,36,50,39,29,34,35,38,35,40,43,38,35,41,37,36,36,35,31,30,34,23,21,34,32,26,31,35,31,25,27,34,28,32,29,29,30,28,42,36,36,31,35,38,31,31,36,34,29,32,37,28,32,29,28,29,29,31,36,29,28,34,34,29,49,29,38,25,29,26,29,36,41,40,33,38,48,50,29,27,37,38,35,45,27,32,45,31,28,41,39,39,32,36,41,42,32,32,33,37,36,48,28,40,38,27,33,37,38,32,31,35,26,29,35,34,25,32,17,18,29,16,22,14,19,18,15,13,18,59]';
                 //json = JSON.parse(data);
                 json= JSON.parse(json);
-                console.log(json);
                 var height = 90;
-                var width = 730;
                 var h2;
                 
                 var c    = document.createElement("canvas");
-                c.width  = width;
+                c.width  = this.waveform.clientWidth;
                 c.height = height;
                 var ctx  = c.getContext("2d");
-
+                var new_width = parseInt(this.waveform.clientWidth / 6,10);
+                var jsonPoints = json.map((item, i) => [i, item]);
+                json = LTTB(jsonPoints, new_width).map((item) => item[1]);
                 function getGraph(fillStyle1,fillStyle2,fillStyle3) {
                         
                     if (fillStyle3) {
@@ -89,15 +91,12 @@ export class YourMusic extends Component {
                     return c.toDataURL();
                 }
 
-                this.waveform.style.width  = width  +'px';
                 this.waveform.style.height = height +'px';
                 this.waveform.style.backgroundImage = 'url(' + getGraph("#FFFFFF","#2D2B36") +')';
                     
 
-                this.waveformHover.style.height = height +'px';
-                this.waveformHover.style.backgroundImage = 'url(' + getGraph("#E61B4C","#E61B4C","#2D2B36") +')';
-        
-        
+                document.getElementById("waveform_hover").style.height = height +'px';
+                document.getElementById("waveform_hover").style.backgroundImage = 'url(' + getGraph("#E61B4C","#2D2B36","#2D2B36") +')';
     }
     
 
@@ -113,7 +112,6 @@ export class YourMusic extends Component {
                 this.setState( { genresList: res.data } ))
     }
 
-    toggle = () => { this.setState({ modal: !this.state.modal }); }
 
     onChangeArtwork = (e) => {
         const artworkData = new FormData();
@@ -195,6 +193,10 @@ export class YourMusic extends Component {
     onSubmitTrack = (e) => {
         e.preventDefault();
         
+        if (this.state.audioLoading || this.state.artworkLoading) {
+            return;
+        }
+
         this.setState({isSubmitting: true});
 
         const newSong = {
@@ -206,6 +208,43 @@ export class YourMusic extends Component {
             waveform: this.state.waveform
         }
         
+        if (newSong.artwork) {
+            this.setState({
+                artworkPopoverOpen: false
+            });
+        }
+
+        if (!newSong.filename) {
+            this.setState({
+                filenamePopoverOpen: true,
+                isSubmitting: false
+            });
+            return;
+        }
+
+        let exitFlag = false;
+        for (let prop in newSong) {
+            if (!newSong[prop]) {
+                this.setState({
+                    [prop + 'PopoverOpen']: true,
+                });
+            }
+        }
+        if (exitFlag) {
+            if (newSong.name && this.state.namePopoverOpen) {
+                this.setState({ namePopoverOpen: false });
+            }
+
+            if (newSong.artistName && this.state.artistNamePopoverOpen) {
+                this.setState({ namePopoverOpen: false });
+            }
+
+            this.setState({
+                isSubmitting: false
+            });
+            return;
+        }
+
         if (!newSong.name || !newSong.genre || 
             !newSong.artistName || !newSong.filename || 
             !newSong.artwork || !newSong.waveform) {
@@ -214,8 +253,6 @@ export class YourMusic extends Component {
             }
 
         const body = JSON.stringify(newSong);
-
-        console.log(newSong);
 
         axios
             .post('/api/songs/', body, this.getToken())
@@ -236,10 +273,14 @@ export class YourMusic extends Component {
                     .then(res =>
                         this.setState( { songsList: res.data } ))
 
-                this.toggle();
+                this.onClose();
             })
+    }
 
-        
+    onPopoverToggle = e => {
+        this.setState({
+            [e.target.id + 'PopoverOpen']: false
+        });
     }
 
     onChangeArtistName= (e) => {
@@ -255,6 +296,18 @@ export class YourMusic extends Component {
     }
 
     onClose = (e) => {
+        if (this.state.audioLoading || this.state.artworkLoading) {
+            return;
+        }
+
+        let newState = Object.keys(this.state)
+                                .filter(item => item.endsWith('PopoverOpen'))
+                                .reduce((acc, item) => ({
+                                    ...acc, 
+                                    [item] : false
+                                }), {});
+        this.setState(newState);
+
         this.setState({
             selectedAudioFile: null,
             selectedArtworkFile: null,
@@ -263,16 +316,30 @@ export class YourMusic extends Component {
             artistName: '',
             trackName: '',
             genre: null,
-            isSubmitting: null
+            isSubmitting: null,
+            modal: !this.state.modal
         });
-        this.toggle();
     }
+
+    onOpenModal = () => { this.setState({ modal: true }); }
 
     togglePlay = () => {
         if (this.audio.paused)
             this.audio.play();
         else
             this.audio.pause();
+    }
+
+    clearNamePopover = (e) => {
+        this.setState({
+            namePopoverOpen: false
+        });
+    }
+
+    clearArtistNamePopover = (e) => {
+        this.setState({
+            artistNamePopoverOpen: false
+        });
     }
 
     getToken = () => {
@@ -300,7 +367,7 @@ export class YourMusic extends Component {
         return (
             <Container className="review-container">
                 <h1 className="text-white font-display animate-fadein"><strong>Your Music</strong></h1>
-                    <Modal isOpen={this.state.modal} toggle={this.toggle} size="xl"> 
+                    <Modal isOpen={this.state.modal} toggle={this.onClose} size="xl"> 
                         <ModalHeader>
                             Add Song
                         </ModalHeader>  
@@ -308,13 +375,18 @@ export class YourMusic extends Component {
                         <ModalBody>
                             
                             { this.state.uploadedArtwork ?
-                            <img src={this.state.uploadedArtwork ? `${this.state.uploadedArtwork}` : "userpic.png"} className="artwork-uploaded animate-fadein"/>
+                            <img src={this.state.uploadedArtwork ? `${this.state.uploadedArtwork}` : "userpic.png"} className="artwork-uploaded animate-fadein" alt='artwork'/>
                             :
-                                <label for="artwork" className="add-artwork-placeholder  d-inline-block">
+                                <label htmlFor="artworkFile" className="add-artwork-placeholder  d-inline-block">
                                     {!this.state.artworkLoading ? 
-                                    <div className="add-artwork-icon">
+                                    <div className="add-artwork-icon" id="artwork">
                                         <FontAwesomeIcon icon="file-image" className="" size="3x"/>
                                         <div className="add-artwork-text">Upload Artwork...</div>
+                                        <Popover placement="bottom" isOpen={ this.state.artworkPopoverOpen } target="artwork" toggle={this.onPopoverToggle}>
+                                            <PopoverBody className="text-white">
+                                                Select artwork file.
+                                            </PopoverBody>
+                                        </Popover>
                                     </div>
                                     :
                                     <div className="add-artwork-icon text-white">
@@ -324,7 +396,9 @@ export class YourMusic extends Component {
                                     }
                                 </label>
                             }
-                            <Input id="artwork" type="file" accept="image/*" name="artwork" onChange={this.onChangeArtwork} className="d-none" />
+                            
+
+                            <Input id="artworkFile" type="file" accept="image/*" name="artwork" onChange={this.onChangeArtwork} className="d-none" />
                             
                             { this.state.uploadedAudio ?
                                 <div className="song-uploaded d-inline-block ml-3">
@@ -335,27 +409,43 @@ export class YourMusic extends Component {
                                             </button>
 
                                             <div>
+                                                <div id="artistName" onClick={this.clearArtistNamePopover}>
                                                     <EditableLabel 
                                                         labelClassName="player-artist-name cursor-text"
                                                         inputClassName="artist-name-input"
-                                                        inputMaxLength="50"
-                                                        inputWidth="200px"
+                                                        inputMaxLength={50}
+                                                        inputWidth="400px"
                                                         inputHeight="25px"
                                                         labelPlaceHolder="Click here to enter artist name"
                                                         value={this.state.artistName}
                                                         onChange={this.onChangeArtistName}
                                                     />
+                                                </div>
+
+                                                <div id="name" onClick={this.clearNamePopover}>
                                                     <EditableLabel 
                                                         labelClassName="player-track-name cursor-text"
                                                         inputClassName="track-name-input"
                                                         labelPlaceHolder="Click here to enter track name"
-                                                        inputMaxLength="50"
-                                                        inputWidth="200px"
+                                                        inputMaxLength={50}
+                                                        inputWidth="400px"
                                                         inputHeight="25px"
                                                         value={this.state.name}
                                                         onChange={this.onChangeName}
                                                     />
+                                                </div>
 
+                                                <Popover placement="right" isOpen={ this.state.namePopoverOpen } target="name" toggle={this.onPopoverToggle}>
+                                                    <PopoverBody className="text-white">
+                                                        Enter name of your song.
+                                                    </PopoverBody>
+                                                </Popover>
+
+                                                <Popover isOpen={ this.state.artistNamePopoverOpen } target="artistName" toggle={this.onPopoverToggle}>
+                                                    <PopoverBody className="text-white">
+                                                        Enter artist's name.
+                                                    </PopoverBody>
+                                                </Popover>
                                             </div>
                                         </div>
                                         
@@ -368,9 +458,9 @@ export class YourMusic extends Component {
                                         </div>
                                 </div>
                             :
-                            <label for="audio" className="add-song-placeholder d-inline-block ml-3">
+                            <label htmlFor="audio" className="add-song-placeholder d-inline-block ml-3">
                                 {!this.state.audioLoading ?
-                                    <div className="add-artwork-icon">
+                                    <div className="add-artwork-icon" id="filename">
                                         <FontAwesomeIcon icon="file-audio" className="" size="3x"/>
                                         <div className="add-artwork-text">Upload Audio...</div>
                                     </div>
@@ -384,34 +474,49 @@ export class YourMusic extends Component {
                             }
                             <Input id="audio" type="file" accept="audio/mp3" name="audio" onChange={this.onChangeAudio} className="d-none" />
 
-                            <select className="custom-control mt-5 custom-select" data-style="btn-primary" id="genre" onChange={this.onChangeGenre}>
-                                        <option value="" selected disabled>Select genre</option>
+                            <select className="custom-control mt-5 custom-select" data-style="btn-primary" defaultValue="sel" id="genre" onChange={this.onChangeGenre}>
+                                        <option value="sel" disabled>Select genre</option>
                                         { this.state.genresList.map((item) => 
                                             <option value={item._id} key={item._id}>{ item.text }</option>
                                         )}
                             </select>
+                            
+                            <Popover placement="bottom" isOpen={ this.state.filenamePopoverOpen } target="filename" toggle={this.onPopoverToggle}>
+                                <PopoverBody className="text-white">
+                                    Select audio file of your song.
+                                </PopoverBody>
+                            </Popover>
+
+                            
+
+                            <Popover placement="bottom" isOpen={ this.state.genrePopoverOpen } target="genre" toggle={this.onPopoverToggle}>
+                                <PopoverBody className="text-white">
+                                    Select your song's genre.
+                                </PopoverBody>
+                            </Popover>
+
                             
                             
                         </ModalBody>
 
                         <ModalFooter>
                         <button className="btn btn-danger" onClick={this.onSubmitTrack}>
-                            SUBMIT
+                            Submit
                         </button>       
                         <button className="btn btn-secondary" onClick={this.onClose}>
-                            CLOSE
+                            Close
                         </button>
                         </ModalFooter> 
                     </Modal>
 
                     <div className="mt-5">
-                        <div className="yourMusicEntry yourMusicEntryCol pl-2 text-red"  onClick={this.toggle}>
+                        <div className="yourMusicEntry yourMusicEntryCol pl-2 text-red"  onClick={this.onOpenModal}>
                             <FontAwesomeIcon icon="plus" className="mr-2" />
                             Add Song...
                         </div>
                         
                         { this.state.songsList.map((item) =>
-                            <div className="yourMusicEntry">
+                            <div className="yourMusicEntry" key={item._id}>
                                 <Link to={`your_music/song?id=${item._id}`}>
                                     <Row>
                                     <img src={item.artwork ? `${item.artwork}` : "userpic.png"} alt="avatar" className="artwork-yourMusic" />

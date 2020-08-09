@@ -51,7 +51,6 @@ class FooterPlayer extends Component {
         
         if (this.props.song.currentTime !== prevProps.song.currentTime && this.props.song.duration) {
             var v = Math.floor(this.props.song.currentTime / this.props.song.duration * 1000)
-            //console.log('v:' + v);
             if (v !== this.state.sliderValue) {
                 this.setState({
                     sliderValue: v

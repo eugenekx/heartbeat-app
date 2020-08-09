@@ -2,13 +2,14 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { Container } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import EditableLabel from 'editable-label-react';
+import EditableLabel from '../lib/EditableLabel';
 import Progressor from '../lib/Progressor';
 import queryString from 'query-string';
 import axios from 'axios';
 import { loadUser } from '../actions/authActions';
 import { Row, Col } from 'reactstrap';
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { LTTB } from 'downsample';
 
 function getTime(time) {
     if (!isNaN(time)) {
@@ -37,23 +38,25 @@ export class SongInfo extends Component {
 
     audio = new Audio();
     progressor = null;
-
+    waveform = null;
+    waveformHover = null;
 
     get_png() {
-
-        var json = '[50,42,38,33,32,28,14,18,15,38,39,30,40,41,35,35,40,38,30,42,36,37,33,28,30,32,35,33,43,36,36,39,36,29,43,32,39,25,22,21,23,24,19,17,22,21,20,17,29,24,23,30,41,32,33,35,38,39,28,35,37,37,40,36,37,33,33,32,32,30,33,30,37,37,33,35,38,35,35,31,35,35,29,26,31,30,27,30,28,30,30,27,27,37,43,35,39,36,40,35,38,41,45,37,40,34,42,39,41,39,30,37,43,35,39,47,32,33,37,34,36,36,41,40,38,38,34,34,32,35,39,40,36,38,35,37,38,32,33,32,27,30,26,32,34,29,40,36,30,38,32,38,40,34,35,37,32,36,50,39,29,34,35,38,35,40,43,38,35,41,37,36,36,35,31,30,34,23,21,34,32,26,31,35,31,25,27,34,28,32,29,29,30,28,42,36,36,31,35,38,31,31,36,34,29,32,37,28,32,29,28,29,29,31,36,29,28,34,34,29,49,29,38,25,29,26,29,36,41,40,33,38,48,50,29,27,37,38,35,45,27,32,45,31,28,41,39,39,32,36,41,42,32,32,33,37,36,48,28,40,38,27,33,37,38,32,31,35,26,29,35,34,25,32,17,18,29,16,22,14,19,18,15,13,18,59]';
-                //json = JSON.parse(data);
+        var json = '[50,42,38,33,32,28,14,18,15,38,39,30,40,41,35,35,40,38,30,42,36,37,33,28,30,32,35,33,43,36,36,39,36,29,43,32,39,25,22,21,23,24,19,17,22,21,20,17,29,24,23,30,41,32,33,35,38,39,28,35,37,37,40,36,37,33,33,32,32,30,33,30,37,37,33,35,38,35,35,31,35,35,29,26,31,30,27,30,28,30,30,27,27,37,43,35,39,36,40,35,38,41,45,37,40,34,42,39,41,39,30,37,43,35,39,47,32,33,37,34,36,36,41,40,38,38,34,34,32,35,39,40,36,38,35,37,38,32,33,32,27,30,26,32,34,29,40,36,30,38,32,38,40,34,35,37,32,36,50,39,29,34,35,38,35,40,43,38,35,41,37,36,36,35,31,30,34,23,21,34,32,26,31,35,31,25,27,34,28,32,29,29,30,28,42,36,36,31,35,38,31,31,36,34,29,32,37,28,32,29,28,29,29,31,36,29,28,34,34,29,49,29,38,25,29,26,29,36,41,40,33,38,48,50,29,27,37,38,35,45,27,32,45,31,28,41,39,39,32,36,41,42,32,32,33,37,36,48,28,40,38,27,33,37,38,32,31,35,26,29,35,34,25,32,17,18,29,16,22,14,19,18,15,13,18,59]';        
+        //json = JSON.parse(data);
                 json= JSON.parse(json);
-                console.log(json);
+                //json = json.map((item, i) => (Math.sin(i/10)*20)+10)
                 var height = 90;
-                var width = 1245;
+                //var width = this.waveformHover.clientWidth;
                 var h2;
                 
                 var c    = document.createElement("canvas");
-                c.width  = width;
+                c.width  = this.waveform.clientWidth;
                 c.height = height;
                 var ctx  = c.getContext("2d");
-
+                var new_width = parseInt(this.waveform.clientWidth / 6,10);
+                var jsonPoints = json.map((item, i) => [i, item]);
+                json = LTTB(jsonPoints, new_width).map((item) => item[1]);
                 function getGraph(fillStyle1,fillStyle2,fillStyle3) {
                         
                     if (fillStyle3) {
@@ -66,9 +69,9 @@ export class SongInfo extends Component {
                 
                     json.forEach(function(item, i, arr) {
                         ctx.fillStyle = fillStyle1;
-                        ctx.fillRect(i * 6, height-30, 4, (item - height +20)*0.6);
+                        ctx.fillRect(i * 6, height-30, 4, parseInt((item - height +20)*0.6, 10));
                         
-                        ctx.fillRect(i * 6, height-25, 4, (height - item)*0.1);
+                        ctx.fillRect(i * 6, height-25, 4, parseInt((height - item)*0.1, 10));
                         ctx.fillStyle = fillStyle2;
             
                             var next = json[i + 1];
@@ -79,21 +82,21 @@ export class SongInfo extends Component {
                                 h2 = item;
                             }		
                     
-                        ctx.fillRect(i * 6 + 4, height-30, 2, (h2 - height)*0.7);
+                        ctx.fillRect(i * 6 + 4, height-30, 2, parseInt((h2 - height)*0.7, 10));
             
                     });
 
                     return c.toDataURL();
                 }
 
-                this.waveform.style.width  = width  +'px';
+                //this.waveform.style.width  = width  +'px';
+
+                document.getElementById("waveform_hover").style.height = height +'px';
+                document.getElementById("waveform_hover").style.backgroundImage = 'url(' + getGraph("#E61B4C","#000","#201F26") +')';
+
+                
                 this.waveform.style.height = height +'px';
                 this.waveform.style.backgroundImage = 'url(' + getGraph("#FFFFFF","#201F26") +')';
-                    
-
-                this.waveformHover.style.height = height +'px';
-                this.waveformHover.style.backgroundImage = 'url(' + getGraph("#E61B4C","#E61B4C","#201F26") +')';
-        
         
     }
 
@@ -139,8 +142,7 @@ export class SongInfo extends Component {
     }
 
     updateName = (e) => {
-        console.log(this.state.name);
-        console.log(this.state.artistName);
+
     }
 
     onChangePoints= (e) => {
@@ -159,9 +161,6 @@ export class SongInfo extends Component {
         if (parsed !== this.state.song.reviewPoints) {
             if (!isNaN(parsed)) {
                 if (parsed >= 0) {
-                    console.log(parsed);
-
-                    console.log('ready to transfer' + parsed);
                     axios.post(`/api/songs/addpoints/${songId}`, body, this.getToken())
                         .then((res) => {
                             axios.get(`/api/songs/id/${songId}`, this.getToken())
@@ -169,8 +168,6 @@ export class SongInfo extends Component {
                                     song: res.data,
                                     points: res.data.reviewPoints.toString() 
                                 }))
-                            
-                            console.log('now loading user');
                             this.props.loadUser();
 
                         })
@@ -187,7 +184,6 @@ export class SongInfo extends Component {
 
     componentDidMount() {
         const songId = queryString.parse(this.props.location.search).id;
-        
         axios
             .get(`/api/songs/id/${songId}`, this.getToken())
             .then(res =>
@@ -202,7 +198,7 @@ export class SongInfo extends Component {
 
                     this.audio.src = this.state.song.filename;
                 
-                    this.audio.addEventListener('loadedmetadata',() => {
+                    this.audio.addEventListener('loadedmetadata', () => {
                         this.setState({
                             currentTime: this.audio.currentTime,
                             duration: this.audio.duration
@@ -222,12 +218,18 @@ export class SongInfo extends Component {
                         points: this.state.song.reviewPoints.toString()
                     });
 
+                    window.addEventListener('resize', this.get_png);
+
                 }));
         
         axios
             .get(`/api/reviews/song/${songId}`, this.getToken())
             .then(res =>
                 this.setState({reviews: res.data}));
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.get_png);
     }
 
     getToken = () => {
@@ -253,11 +255,12 @@ export class SongInfo extends Component {
         const { song } = this.state;
         const duration = getTime(this.state.duration);
         const currentTime = getTime(this.state.currentTime);
+        
         return (
             <SkeletonTheme color="#2D2B36" highlightColor="#737087">
             <Container className="review-container ml-0">
                 { song ?
-                    <img src={song.artwork ? `${song.artwork}` : "userpic.png"} className="artwork-uploaded"/>
+                    <img src={song.artwork ? `${song.artwork}` : "userpic.png"} className="artwork-uploaded" alt='artwork'/>
                     :
                     <Skeleton width={200} height={200} />
                 }
@@ -276,7 +279,7 @@ export class SongInfo extends Component {
                                 <EditableLabel 
                                     labelClassName="player-artist-name cursor-text"
                                     inputClassName="songinfo-artist-name-input"
-                                    inputMaxLength="50"
+                                    inputMaxLength={50}
                                     inputWidth="400px"
                                     inputHeight="25px"
                                     labelPlaceHolder="Click here to enter artist name"
@@ -288,7 +291,7 @@ export class SongInfo extends Component {
                                     labelClassName="player-track-name cursor-text"
                                     inputClassName="songinfo-track-name-input"
                                     labelPlaceHolder="Click here to enter track name"
-                                    inputMaxLength="50"
+                                    inputMaxLength={50}
                                     inputWidth="400px"
                                     inputHeight="25px"
                                     value={this.state.name}
@@ -312,7 +315,7 @@ export class SongInfo extends Component {
                                     labelClassName="points-label"
                                     inputClassName="points-input"
                                     labelPlaceHolder="-"
-                                    inputMaxLength="2"
+                                    inputMaxLength={2}
                                     inputWidth="20px"
                                     inputHeight="25px"
                                     value={this.state.points}
@@ -331,8 +334,10 @@ export class SongInfo extends Component {
                         <div className="mt-4 review-player-time-left text-white">{ song ? currentTime : <Skeleton />   }</div>
                             <div id="wave_wrap">
                                 { song ?
-                                <div className="player-row waveform" id="waveform" ref={(a) => { this.waveform = a; }}><div id="waveform_hover"  ref={(a) => { this.waveformHover = a; }}></div></div>
-                                : <Skeleton height={60} width={1245} /> }
+                                    <div className="player-row waveform" id="waveform" ref={(a) => { this.waveform = a; }}>
+                                        <div id="waveform_hover" ref={(a) => { this.waveformHover = a; }}></div>
+                                    </div>
+                                : <Skeleton height={60} /> }
                             </div>
                         <div className="mt-4 review-player-time-right text-white">{ song ? duration : <Skeleton />  }</div>
                     </div>
@@ -341,23 +346,28 @@ export class SongInfo extends Component {
                 {song ?
                 <div>
                     { this.state.reviews.map((item) =>
-                        <div>
-                        <Row className="ml-0 pl-2 mr-1 borderBottom pb-3">
-                            <div className="text-white artist-info">
-                                <img src={`${item.user.avatar}`} alt="avatar" className="artist-avatar" />
-                                <div className="mt-3 artist-name mb-1">{item.user.name}</div>
-                            </div>
-                        
-                            <Col className="px-0 mx-0">
-                                <div className="text-white your-rating animate-fadein">
-                                    <p className="myBreadcrumbItem mb-0 animate-fadein">Reviewed on { getDate(item.date) }</p>
-                                    {item.text ? <p className="your-rating-h mt-0 animate-fadein">{item.text}</p> : <p className="no-text-provided"><i>(without text)</i></p>}
-                                    {item.rating ? <FontAwesomeIcon icon="thumbs-up" className="your-rating-h animate-fadein" /> : <FontAwesomeIcon icon="thumbs-down" className="your-rating-h animate-fadein" />}
+                        <div key={item._id}>
+                            <Row className="ml-0 pl-2 mr-1 borderBottom pb-3">
+                                <div className="text-white artist-info">
+                                    <img src={`${item.user.avatar || "/userpic.png" }`} alt="avatar" className="artist-avatar" />
+                                    <div className="mt-3 artist-name mb-1">{item.user.name}</div>
                                 </div>
-                            </Col>        
-                        </Row>
+                            
+                                <Col className="px-0 mx-0">
+                                    <div className="text-white your-rating animate-fadein">
+                                        <p className="myBreadcrumbItem mb-0 animate-fadein">Reviewed on { getDate(item.date) }</p>
+                                        {item.text ? <p className="your-rating-h mt-0 animate-fadein">{item.text}</p> : <p className="no-text-provided"><i>(without text)</i></p>}
+                                        {item.rating ? <FontAwesomeIcon icon="thumbs-up" className="your-rating-h animate-fadein" /> : <FontAwesomeIcon icon="thumbs-down" className="your-rating-h animate-fadein" />}
+                                    </div>
+                                </Col>        
+                            </Row>
                         </div>
                     )}
+                    {this.state.reviews.length ? 
+                    null
+                    :
+                    <h3 className="text-white">There are no reviews yet.</h3>
+                    }
                 </div>
                 :
                         <Row className="ml-0 pl-2 mr-1 pb-3">
