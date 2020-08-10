@@ -34,8 +34,8 @@ Password: heartbeat
 * AWS S3 -- хранилище для пользовательских файлов.
 
 ## Развертывание и тестирование
-* GitLab CI/CD
-* Heroku CLI
-* Mocha + Chai + Supertest
+* GitLab CI/CD,
+* Heroku CLI,
+* Mocha + Chai + Supertest.
 
 При разработке использовались GitLab и JIRA, документация API сгенерирована при помощи ApiDoc.
