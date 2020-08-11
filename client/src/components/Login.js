@@ -27,6 +27,16 @@ class Login extends Component {
         clearErrors: PropTypes.func.isRequired
     };
 
+    componentDidMount() {
+        if (this.props.location.demo) {
+            let user = {
+                email: "test@heart.beat",
+                password: "heartbeat"
+            }
+            this.props.login(user);
+        }
+    }
+
     componentDidUpdate(prevProps) {
         const { error, isAuthenticated } = this.props;
         if (error !== prevProps.error) {

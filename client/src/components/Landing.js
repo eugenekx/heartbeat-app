@@ -19,7 +19,7 @@ export class Landing extends Component {
                     <div className="animation" />
                     <p className="heading-1 landing-gradient-text">MAKE HEARTS <span className="">BEAT</span></p>
                     <p className="heading-2">Get your music reviewed by HeartBeat community</p>
-                    <Link to="/login" className="landing-button">GET STARTED!</Link>
+                    <Link to={{pathname: "/login", demo: true}} className="landing-button">TRY DEMO!</Link>
                 </div>
             </Fragment>
         )
