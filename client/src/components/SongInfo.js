@@ -205,11 +205,7 @@ export class SongInfo extends Component {
                         });
                     }, false);
                     
-                    this.audio.addEventListener('timeupdate', () => {
-                        this.setState({
-                            currentTime: this.audio.currentTime
-                        })
-                    }, false);
+                    this.audio.addEventListener('timeupdate', this.updateTime, false);
 
                     this.setState({
                         artistName: this.state.song.artistName,
@@ -228,8 +224,18 @@ export class SongInfo extends Component {
                 this.setState({reviews: res.data}));
     }
 
+    updateTime = () => {
+        this.setState({
+            currentTime: this.audio.currentTime
+        })
+    }
+
     componentWillUnmount() {
         window.removeEventListener('resize', this.get_png);
+
+        this.audio.removeEventListener('timeupdate', this.updateTime, false);
+
+        this.audio.pause();
     }
 
     getToken = () => {
